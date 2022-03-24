@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--STATUS OK-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>登录页面</title>
+    <link rel="stylesheet" th:href="@{/less/icons/font-awesome/css/font-awesome.min.css}">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+
+</head>
+<body>
+<div class="tpl-wrap">
+    <div class="tpl-user-modal-wrapper">
+        <div class="tpl-modal">
+            
+            <div class="tpl-modal-item">
+                <div class="left-form-item">
+                    <form action="" autocomplete="off">
+                        <p class="sub-title">layAdmin管理系统-注册通行证</p>
+                        <div class="group">
+                            <label><i class="fa fa-user-o"></i></label>
+                            <input type="text" name="userAccount" class="inp" placeholder="请输入用户名">
+                        </div>
+                        <div class="group">
+                            <label><i class="fa fa-unlock-alt"></i></label>
+                            <input type="password" name="password" class="inp" placeholder="请输入密码">
+                        </div>
+                        <div class="group">
+                            <label><i class="fa fa-lock"></i></label>
+                            <input type="password" name="userName" class="inp" placeholder="请重新输入密码">
+                        </div>
+                        <div class="group">
+                            <label><i class="fa fa-envelope-o"></i></label>
+                            <input type="text" name="学院" class="inp" placeholder="请输入邮箱地址">
+                        </div>
+                        <div class="group">
+                            <label><i class="fa fa-envelope-o"></i></label>
+                            <input type="text" name="email" class="inp" placeholder="请输入邮箱地址">
+                        </div>
+                        <div class="group">
+                            <label><i class="fa fa-envelope-o"></i></label>
+                            <input type="text" name="email" class="inp" placeholder="请输入邮箱地址">
+                        </div>
+                        <div class="group">
+                            <button class="submit">立即注册</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="right-bg-item">
+                    <img th:src="@{/images/right-bg.png}">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/layer.js}"></script>
+<script>
+    $("form").submit(function(e){
+        e.preventDefault();
+        let username = $("input[name='username']").val();
+        let pass = $("input[name='password']").val();
+        let pass1 = $("input[name='password1']").val();
+        let email = $("input[name='email']").val();
+        let code = $("input[name='code']").val();
+        let regmail = /(^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$)|(^$)/;
+        if (username == '') {
+            layer.msg('用户名不能为空');
+        } else if (pass == '') {
+            layer.msg('密码不能为空');
+        } else if (pass1 == '') {
+            layer.msg('重复密码不能为空');
+        } else if (pass != pass1) {
+            layer.msg('两次输入的密码不一致');
+        } else if (email == '') {
+            layer.msg('邮箱不能为空');
+        } else if (!regmail.test(email)) {
+            layer.msg('邮箱格式错误');
+        } else if (code == '') {
+            layer.msg('验证码不能为空');
+        } else {
+            layer.load(1);
+            $.ajax({
+                url: "{:url('register')}",
+                type: 'post',
+                dataType:"json",
+                data: {
+                    username: username,
+                    password: pass,
+                    password1: pass1,
+                    email: email,
+                    code: code
+                },
+                success: function (d) {
+                    layer.closeAll('loading');
+                    layer.msg(d.msg);
+                },
+                error: function () {
+                    layer.msg('网络错误');
+                    layer.closeAll('loading')
+                }
+            })
+        }
+        return false;
+    });
+
+</script>
+</body>
+</html>

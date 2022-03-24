@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dlu.upms.system.mapper.ResourceMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dlu.upms.system.entity.Resource">
+        <id column="id" property="id" />
+        <result column="update_time" property="updateTime" />
+        <result column="del_flag" property="delFlag" />
+        <result column="resource_name" property="resourceName" />
+        <result column="parent_id" property="parentId" />
+        <result column="resource_key" property="resourceKey" />
+        <result column="resource_type" property="resourceType" />
+        <result column="resource_icon" property="resourceIcon" />
+        <result column="resource_path" property="resourcePath" />
+        <result column="resource_url" property="resourceUrl" />
+        <result column="resource_level" property="resourceLevel" />
+        <result column="resource_show" property="resourceShow" />
+        <result column="resource_cache" property="resourceCache" />
+        <result column="resource_page_name" property="resourcePageName" />
+        <result column="description" property="description" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        update_time,
+        del_flag,
+        id, resource_name, parent_id, resource_key, resource_type, resource_icon, resource_path, resource_url, resource_level, resource_show, resource_cache, resource_page_name, description
+    </sql>
+
+</mapper>

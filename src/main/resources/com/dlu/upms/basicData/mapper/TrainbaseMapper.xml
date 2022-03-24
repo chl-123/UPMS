@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dlu.upms.basicData.mapper.TrainbaseMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dlu.upms.basicData.entity.Trainbase">
+        <id column="id" property="id" />
+        <result column="update_time" property="updateTime" />
+        <result column="del_flag" property="delFlag" />
+        <result column="base_key" property="baseKey" />
+        <result column="base_name" property="baseName" />
+        <result column="base_address" property="baseAddress" />
+        <result column="is_inside" property="isInside" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        update_time,
+        del_flag,
+        id, base_key, base_name, base_address, is_inside
+    </sql>
+    <select id="selectTrainbaseList" resultType="com.dlu.upms.basicData.dto.TrainbaseInfo">
+        SELECT
+        t.id  AS id,
+        t.base_key AS         baseKey,
+        t.base_name AS          baseName,
+        t.base_address AS         baseAddress,
+        t.is_inside AS           isInside,
+        t.update_time AS        updateTime,
+        t.del_flag AS           delFlag
+        FROM t_bd_trainbase  t
+        WHERE t.del_flag = 0
+        <trim prefix="AND (" suffix=")" prefixOverrides="AND">
+            <if test="trainbase.baseName != null and trainbase.baseName != ''">
+                AND t.base_name like concat(concat('%', #{trainbase.baseName}), '%')
+            </if>
+            <if test="trainbase.baseKey != null and trainbase.baseKey != ''">
+                AND t.base_key = #{trainbase.baseKey}
+            </if>
+<!--            <if test="trainbase.isInside != null and trainbase.isInside != ''">-->
+<!--                AND t.is_inside = #{trainbase.isInside}-->
+<!--            </if>-->
+            <if test="trainbase.updateTimeStart != null and trainbase.updateTimeEnd != null ">
+                And t.update_time &gt;= #{trainbase.updateTimeStart} And t.update_time &lt;= DATE_ADD(#{trainbase.updateTimeEnd}, INTERVAL 1 DAY)
+            </if>
+
+        </trim>
+        ORDER BY update_time DESC
+    </select>
+
+</mapper>

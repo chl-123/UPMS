@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title> - 百度ECHarts</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="ibox-content" style="height: 500px;width: auto">
+
+            <div class="echarts" id="echarts-bar-chart" style="height: 500px;width: auto"></div>
+        </div>
+    </div>
+    <!-- 全局js -->
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/layer/layer.js}"></script>
+    <script th:src="@{/layui/layui.js}"></script>
+    <script th:src="@{/js/echarts.js}"></script>
+    <script>
+        var myChart = echarts.init(document.getElementById('echarts-bar-chart'));
+        $.ajax({
+            "url":"http://localhost:8080/business/projectSelect/selectCount",
+            "type":"get",
+            "dataType":"json",
+            "success":function (response) {
+                var result=response.code;
+                var list=response.data;
+                var name=[]
+                var value=[]
+                if(result==200){
+                    if (list.length) {
+                        for (var i = 0; i < list.length; i++) {
+                            if(list[i].value1!=0){
+                                name.push(list[i].name)
+                                value.push(list[i].value1)
+                            }
+                        }
+                    }
+                    // 指定图表的配置项和数据
+                    var option = {
+                        title: {
+                            text: '选课统计图'
+                        },
+                        tooltip: {},
+                        legend: {
+                            data: ['销量']
+                        },
+                        xAxis: {
+                            data: name
+                        },
+                        yAxis: {},
+                        series: [
+                            {
+                                name: '数量',
+                                type: 'bar',
+                                data: value
+                            }
+                        ]
+                    };
+                    myChart.setOption(option);
+                }
+                else {
+                    layer.msg(response.msg);
+                }
+            },
+            "error":function (response) {
+                layer.msg(response.code+" "+response.msg);
+            }
+        })
+
+
+
+
+
+    </script>
+
+    
+    
+
+</body>
+
+</html>

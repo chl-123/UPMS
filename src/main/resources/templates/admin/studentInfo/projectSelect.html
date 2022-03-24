@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title> - Bootstrap Table</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/font-awesome.css}" rel="stylesheet">
+    <link th:href="@{/css/plugins/bootstrap-table/bootstrap-table.min.css}" rel="stylesheet">
+    <link th:href="@{/css/animate.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">
+    
+
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="example">
+                    <div class="form-inline" style="text-align: center;padding: 20px 0 30px">
+                        <div class="form-group">
+                            <label for="projectKey" style="padding-left: 20px">项目编号：</label>
+                            <input id="projectKey" class="form-control input-sm" STYLE="height: 36px">
+                        </div>
+                        <div class="form-group" >
+                            <label for="projectName">项目名称：</label>
+                            <input id="projectName" class="form-control input-sm" STYLE="height: 36px">
+                        </div>
+
+                        <div class="form-group" id="updateTime">
+                            <label for="updateTimeStart" style="padding-left: 20px">更新时间：</label>
+                            <input id="updateTimeStart" class="form-control layer-date" style="width: 100px;height: 36px">
+                            <div class="form-group">-</div>
+                            <input id="updateTimeEnd" class="form-control layer-date" style="width: 100px ;height: 36px">
+                        </div>
+
+                        <div class="form-group" style="padding-left: 20px">
+                            <button class="btn btn-primary btn-sm" id="queryBtn">查询</button>
+                        </div>
+
+                    </div>
+                    <table id="userTable" >
+
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- End Panel Other -->
+
+
+    <!-- 全局js -->
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+
+    <!-- 自定义js -->
+    <script th:src="@{/js/content.js}"></script>
+    <script th:src="@{/js/common.js}"></script>
+
+    <!-- Bootstrap table -->
+    <script th:src="@{/js/plugins/bootstrap-table/bootstrap-table.min.js}"></script>
+    <script th:src="@{/js/plugins/bootstrap-table/bootstrap-table-mobile.min.js}"></script>
+    <script th:src="@{/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js}"></script>
+
+    <script th:src="@{/layer/layer.js}"></script>
+    <script th:src="@{/layui/layui.js}"></script>
+    <script th:src="@{/js/xm-select.js}"></script>
+
+
+    <script type="text/javascript">
+        $(function () {
+            //初始化表格
+            var oTable = new TableInit();
+            oTable.Init();
+
+        });
+
+        function TableInit() {
+            var oTableInit = new Object();
+            //初始化Table
+            oTableInit.Init = function () {
+                $('#userTable').bootstrapTable({
+                    // 请求后台的URL（*）
+                    url:"http://localhost:8080/business/project/projectSelected/list",
+                    method: 'GET',           //请求方式（*）
+                    striped: true,           //是否显示行间隔色
+                    cache: false,            //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                    pagination: true,          //是否显示分页（*）
+                    sortOrder: "asc",          //排序方式
+                    queryParamsType: '',
+                    dataType: 'json',
+                    paginationShowPageGo: true,
+                    showJumpto: true,
+                    pageNumber: 1, //初始化加载第一页，默认第一页
+                    queryParams: queryParams,//请求服务器时所传的参数
+                    sidePagination: 'server',//指定服务器端分页
+                    pageSize: 10,//单页记录数
+                    pageList: [5,10, 20, 30, 40],//分页步进值
+                    search: false, //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                    silent: true,
+                    showRefresh: false,         //是否显示刷新按钮
+                    showToggle: false,
+                    minimumCountColumns: 2,       //最少允许的列数
+                    uniqueId: "id",           //每一行的唯一标识，一般为主键列
+                    columns: [{
+                        field: 'xuhao',
+                        title: '序号',
+                        align: 'center',
+                        formatter: function (value, row, index) {
+                            return index + 1;
+                        }
+                    },
+                    {
+                        field: 'projectKey',
+                        title: '项目编号',
+                        align: 'center'
+                    },
+                    {
+                        field: 'projectName',
+                        title: '项目名称',
+                        align: 'center',
+                        width: '235px'
+                    },
+                    {
+                        field: 'userName',
+                        title: '任课老师',
+                        align: 'center',
+                        width: '235px'
+                    },
+                    {
+                        field: 'studentName',
+                        title: '学生姓名',
+                        align: 'center',
+                        width: '100px'
+                    },
+                    {
+                        field: 'collegeName',
+                        title: '学院',
+                        align: 'center',
+                        width: '100px'
+                    },
+
+                        {
+                            field: 'isInside',
+                            title: '学生校内(校外)',
+                            align: 'center',
+                            formatter: function (value, row, index) {
+                                var isInside='';
+                                if(row.isInside=='0'){
+                                    isInside="校内"
+                                }else if(row.isInside=='1'){
+                                    isInside="校外"
+                                }
+                                return isInside;
+                            }
+                        },
+                    {
+                        field: 'baseName',
+                        title: '基地',
+                        align: 'center',
+                    },
+                        {
+                            field: 'updateTime',
+                            title: '更新时间',
+                            align: 'center'
+                        },{
+                            field: 'operation',
+                            title: '操作',
+                            align: 'center',
+                            formatter: function(value, row, index) {
+                                var actions = [];
+                                actions.push('<a class="btn btn-danger btn-xs "  href="javascript:void(0)" onclick="remove(\'' + row.id+'\',\'' + row.projectSelectId+'\')"><i class="fa fa-remove"></i>退选</a> ');
+
+                                return actions.join('');
+                            }
+                        }],
+                    responseHandler: function (res) { //后台返回的结果
+                        if(res.code == "200"){
+                            var userInfo = res.data;
+                            var NewData = [];
+                            if (userInfo.length) {
+                                for (var i = 0; i < userInfo.length; i++) {
+                                    var dataNewObj = {
+                                        'id': '',
+                                        "projectKey": '',
+                                        'projectName': '',
+                                        'studentName': '',
+                                        'isInside': '',
+                                        'collegeName': '',
+                                        'userName': '',
+                                        'trainbaseId': '',
+                                        'baseName': '',
+                                        'updateTime': '',
+                                        'isSelect':'',
+                                        'projectSelectId':''
+                                    };
+                                    dataNewObj.isSelect = userInfo[i].isSelect;
+                                    dataNewObj.projectSelectId = userInfo[i].projectSelectId;
+                                    dataNewObj.xuhao=i;
+                                    dataNewObj.id = userInfo[i].id;
+                                    dataNewObj.projectKey = userInfo[i].projectKey;
+                                    dataNewObj.projectName = userInfo[i].projectName;
+                                    dataNewObj.studentName = userInfo[i].studentName;
+                                    dataNewObj.isInside = userInfo[i].isInside;
+                                    dataNewObj.userName = userInfo[i].userName;
+                                    dataNewObj.trainbaseId = userInfo[i].trainbaseId;
+                                    dataNewObj.baseName = userInfo[i].baseName;
+                                    dataNewObj.collegeName = userInfo[i].collegeName;
+                                    dataNewObj.updateTime = userInfo[i].updateTime;
+                                    NewData.push(dataNewObj);
+                                }
+
+                            }
+                            var data = {
+                                total:res.count,
+                                rows: NewData
+                            };
+
+                            return data;
+                        }
+
+                    }
+
+                });
+            };
+
+            // 得到查询的参数
+            function queryParams(params) {
+                var projectKey        = $("#projectKey").val();
+                var projectName         = $("#projectName").val();
+                var updateTimeStart = $.common.dateFormat($("#updateTimeStart").val(),"yyyy-MM-dd")
+                var updateTimeEnd   =$.common.dateFormat($("#updateTimeEnd").val(),"yyyy-MM-dd")
+                var temp = {  //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                    current: params.pageNumber,
+                    size: params.pageSize,
+                    projectKey      :     projectKey       ,
+                    projectName       :     projectName        ,
+                    updateTimeStart  :  updateTimeStart,
+                    updateTimeEnd    :  updateTimeEnd
+                };
+                return temp;
+            }
+
+            return oTableInit;
+        }
+
+
+        //刷新表格
+        $('#queryBtn').click(function () {
+            $('#userTable').bootstrapTable('refresh', {url: '/business/project/projectSelected/list'});//url为后台action
+        })
+        function remove(id,projectSelectId) {
+            layer.confirm('确定删除此条信息吗？', {
+                btn: ['确定','取消'] //按钮
+
+            }, function(){
+                var url="http://localhost:8080/business/projectSelect/delete";
+                var projectSelect={
+                    projectId:id,
+                    projectSelectId:projectSelectId
+                }
+                submit(JSON.stringify(projectSelect),url);
+            });
+        }
+
+        //提交
+        function submit(dateInfo,url){
+            $.ajax({
+                "url":url,
+                "type":"post",
+                "data":dateInfo,
+                "dataType":"json",
+                "contentType":"application/json;charset=UTF-8",
+                "success":function (response) {
+                    var result=response.code;
+                    if(result==200){
+                        layer.msg(response.msg);
+                        CloseWin()
+                    }
+                    else {
+                        layer.msg(response.msg);
+                        CloseWin()
+                    }
+                },
+                "error":function (response) {
+                    layer.msg(response.code+" "+response.msg);
+                }
+            })
+        };
+
+
+        function CloseWin(){
+            $('#userTable').bootstrapTable('refresh', {url: '/business/project/list'});//url为后台action
+            layer.closeAll();
+        }
+
+        layui.use('laydate', function(){
+            var laydate = layui.laydate;
+            var startDate=laydate.render({
+                elem: '#updateTimeStart',
+                type: 'date',
+                istime: true,
+                istoday: true,
+                done:function(value,date){
+                    if(value!=""){
+                        date.month=date.month-1;
+                        endDate.config.min=date;
+                    }else{
+                        endDate.config.min=startDate.config.min;
+                    }
+                },
+            });
+            var endDate =laydate.render({
+                elem: '#updateTimeEnd',
+                type: 'date',
+                istime: true,
+                istoday: true,
+                done:function(value,date){
+                    if(value!=""){
+                        date.month=date.month-1;
+                        startDate.config.max=date;
+                    }else{
+                        startDate.config.max=endDate.config.max;
+
+                    }
+                },
+            });
+
+        });
+        var xm=xmSelect.render({
+            el: '#collegeId',
+            language: 'zn',
+            paging: true,
+            pageSize: 4,
+            filterable: true,
+            model: {
+                label: {
+                    type: 'block',
+                    block: {
+                        //最大显示数量, 0:不限制
+                        showCount: 1,
+                        //是否显示删除图标
+                        showIcon: true,
+                    }
+                }
+            },
+            data: []
+        })
+
+
+
+    </script>
+
+    
+    
+
+</body>
+
+</html>

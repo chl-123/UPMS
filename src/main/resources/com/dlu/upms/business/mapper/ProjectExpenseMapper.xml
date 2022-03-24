@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dlu.upms.business.mapper.ProjectExpenseMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dlu.upms.business.entity.ProjectExpense">
+        <id column="id" property="id" />
+        <result column="update_time" property="updateTime" />
+        <result column="del_flag" property="delFlag" />
+        <result column="project_id" property="projectId" />
+        <result column="site_cost" property="siteCost" />
+        <result column="teacher_salary" property="teacherSalary" />
+        <result column="other" property="other" />
+        <result column="total" property="total" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        update_time,
+        del_flag,
+        id, project_id, site_cost, teacher_salary, other, total
+    </sql>
+    <select id="selectProjectExpenseInfo" resultType="com.dlu.upms.business.dto.ProjectExpenseInfo">
+        SELECT
+        p.id  AS projectId,
+        p.teacher_id AS teacherId,
+        u.user_name AS userName,
+        u.is_inside AS isInsideTeacher,
+        p.project_key AS projectKey,
+        p.project_name AS projectName,
+        p.select_num_max AS selectNumMax,
+        p.select_num AS selectNum,
+        p.college_id AS collegeId,
+        p.update_time AS updateTime,
+        p.project_start AS projectStart,
+        p.project_end AS projectEnd,
+        p.trainbase_id AS trainbaseId,
+        b.base_name AS baseName,
+        b.is_inside AS isInsideBase,
+               pe.id AS id,
+        pe.update_time AS updateTime,
+        pe.site_cost AS  siteCost,
+        pe.teacher_salary AS  teacherSalary,
+        pe.other AS  other,
+        pe.total AS  total
+        FROM t_bus_project p
+        LEFT JOIN t_sys_user u on u.id=p.teacher_id AND u.del_flag=0
+        LEFT JOIN t_bd_trainbase b on b.id=p.trainbase_id AND b.del_flag=0
+        LEFT JOIN t_bus_project_expense pe on pe.project_id=p.id AND b.del_flag=0
+        WHERE p.del_flag = 0
+        <trim prefix="AND (" suffix=")" prefixOverrides="AND">
+            <if test="project.projectName != null and project.projectName != ''">
+                AND p.project_name like concat(concat('%', #{project.projectName}), '%')
+            </if>
+            <if test="project.projectKey != null and project.projectKey != ''">
+                AND p.project_key = #{project.projectKey}
+            </if>
+            <if test="project.teacherId != null and project.teacherId != ''">
+                AND p.teacher_id = #{project.teacherId}
+            </if>
+
+        </trim>
+        ORDER BY p.update_time DESC
+    </select>
+
+</mapper>

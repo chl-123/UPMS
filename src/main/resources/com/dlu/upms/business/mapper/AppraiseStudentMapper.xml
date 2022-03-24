@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dlu.upms.business.mapper.AppraiseStudentMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dlu.upms.business.entity.AppraiseStudent">
+        <id column="id" property="id" />
+        <result column="update_time" property="updateTime" />
+        <result column="del_flag" property="delFlag" />
+        <result column="student_id" property="studentId" />
+        <result column="teacher_id" property="teacherId" />
+        <result column="project_id" property="projectId" />
+        <result column="learning_status" property="learningStatus" />
+        <result column="job_status" property="jobStatus" />
+        <result column="problem" property="problem" />
+        <result column="opinions" property="opinions" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        update_time,
+        del_flag,
+        id, student_id, teacher_id, project_id, learning_status, job_status, problem, opinions
+    </sql>
+    <select id="selectAppraiseStudentListForStudent" resultType="com.dlu.upms.business.dto.AppraiseStudentInfo">
+        SELECT
+        a.id  AS id,
+        a.student_id AS         studentId,
+        a.teacher_id AS          teacherId,
+        a.project_id AS         projectId,
+        a.learning_status AS           learningStatus,
+        a.job_status AS           jobStatus,
+        a.problem AS           problem,
+        a.opinions AS           opinions,
+        a.update_time AS        updateTime,
+        a.del_flag AS           delFlag
+        FROM t_bus_appraise_student  a
+        WHERE a.del_flag = 0
+        <trim prefix="AND (" suffix=")" prefixOverrides="AND">
+            <if test="appraiseStudent.updateTimeStart != null and appraiseStudent.updateTimeEnd != null ">
+                And a.update_time &gt;= #{appraiseStudent.updateTimeStart} And a.update_time &lt;= DATE_ADD(#{appraiseStudent.updateTimeEnd}, INTERVAL 1 DAY)
+            </if>
+
+        </trim>
+        ORDER BY update_time DESC
+    </select>
+
+
+</mapper>

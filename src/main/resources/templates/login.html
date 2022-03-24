@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>登录页面</title>
+    <link rel="stylesheet" th:href="@{/less/icons/font-awesome/css/font-awesome.min.css}">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+
+
+</head>
+<body>
+<div class="tpl-wrap">
+    <div class="tpl-user-modal-wrapper">
+        <div class="tpl-modal">
+            <div class="tpl-modal-item">
+                <div class="left-form-item">
+                    <div autocomplete="off">
+                        <p class="sub-title">实践项目管理系统-登录页面</p>
+                        <div class="group">
+                            <label><i class="fa fa-user-o"></i></label>
+                            <input type="text" name="username" class="inp" placeholder="请输入账号">
+                        </div>
+                        <div class="group">
+                            <label><i class="fa fa-lock"></i></label>
+                            <input type="password" name="password" class="inp" placeholder="请输入密码" >
+                        </div>
+                        <div class="group sm-font">
+                            <label for="remember">
+                            <input type="checkbox" id="remember">
+                            <span class="option"><span class="option-item"><span class="opspan"></span></span></span>
+                            <span class="check-text">记住我</span>
+                            </label>
+                        </div>
+                        <div class="group" >
+                            <button class="submit" id="login" STYLE="display: inline">登陆</button>
+                            <button class="submit" onclick="window.location.href='http://localhost:8080/register'" STYLE="margin-left:30px;display: inline;background: #5FB878">注册</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-bg-item">
+                    <img th:src="@{/images/right-bg.png}">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/layer/layer.js}"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#login").click(function () {
+
+            // //收集表单项中用户输入的数据
+            //
+            // var name=$.trim($("#login [name=name]").val());
+            // var url=$.trim($("#login [name=url]").val());
+            // 单选按钮要定位到“被选中” 的那一个
+            let rememberMe = 0;
+            if ($('#remember').prop("checked") === true) {
+                rememberMe = 1;
+            }
+            let userAccount = $("input[name='username']").val();
+            let userPassword = $("input[name='password']").val();
+
+            if (userAccount == '') {
+                layer.msg('请输入账号');
+            } else if (userPassword == '') {
+                layer.msg('请输入密码');
+            }else{
+                $.ajax({
+                    "url": "http://localhost:8080/doLogin",
+                    "type": "post",
+                    "data": {
+                        "userAccount": userAccount,
+                        "userPassword": userPassword,
+                        "rememberMe": rememberMe
+                    },
+                    "dataType": "json",
+                    "success": function (response) {
+                        var code = response.code;
+                        var user=response.data;
+                        if (code == 200) {
+                            layer.msg(response.msg);
+
+                           if(user.roleKey=="student"){
+                               window.location.href ="http://localhost:8080/student";
+                           }else if(user.roleKey=="teacher"){
+                               window.location.href ="http://localhost:8080/teacher";
+                           }else if(user.roleKey=="admin"){
+                               window.location.href ="http://localhost:8080/admin";
+                           }else if(user.roleKey=="projectAdmin"){
+                               window.location.href ="http://localhost:8080/projectAdmin";
+                           }
+
+                        }else {
+                            layer.msg(response.msg);
+                        }
+                    },
+                    "error": function (response) {
+                        layer.msg(response.code + " " + response.msg);
+                    }
+                });
+            }
+        })
+    });
+</script>
+</body>
+</html>

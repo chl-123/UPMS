@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dlu.upms.system.mapper.UserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dlu.upms.system.entity.User">
+        <id column="id" property="id" />
+        <result column="update_time" property="updateTime" />
+        <result column="del_flag" property="delFlag" />
+        <result column="user_account" property="userAccount" />
+        <result column="user_password" property="userPassword" />
+        <result column="user_name" property="userName" />
+        <result column="user_email" property="userEmail" />
+        <result column="user_sex" property="userSex" />
+        <result column="user_status" property="userStatus" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_account, user_password, user_name, user_email, user_sex, user_status,update_time,del_flag
+    </sql>
+    <select id="selectUserList" resultType="com.dlu.upms.system.dto.UserInfo">
+        SELECT
+        U.id AS id,
+        U.user_account AS userAccount,
+        U.user_password AS userPassword,
+        U.user_name AS userName,
+        U.user_email AS userEmail,
+        U.user_phone AS userPhone,
+        U.is_inside AS isInside,
+        U.user_sex AS userSex,
+        U.user_status AS userStatus,
+        U.update_time AS updateTime,
+        ur.id        AS userRoleId,
+        R.id AS roleId,
+        R.role_key AS roleKey,
+        R.role_name AS roleName,
+        c.id  AS collegeId,
+        c.college_name  AS collegeName
+        FROM t_sys_user U
+        LEFT JOIN t_sys_user_role ur on ur.user_id=U.id AND ur.del_flag=0
+        LEFT JOIN t_sys_role r on r.id=ur.role_id AND r.del_flag=0
+        LEFT JOIN t_bd_college c on c.id=U.college_id AND c.del_flag=0
+        WHERE U.del_flag = 0
+        <trim prefix="AND (" suffix=")" prefixOverrides="AND">
+            <if test="user.userName != null and user.userName != ''">
+                AND U.user_name like concat(concat('%', #{user.userName}), '%')
+            </if>
+            <if test="user.id != null and user.id != ''">
+                AND U.id = #{user.id}
+            </if>
+            <if test="user.userAccount != null and user.userAccount != ''">
+                AND U.user_account = #{user.userAccount}
+            </if>
+
+            <if test="user.roleKey != null and user.roleKey != ''">
+                AND r.role_key = #{user.roleKey}
+            </if>
+            <if test="user.userStatus != null and user.userStatus != ''">
+                AND U.user_status = #{user.userStatus}
+            </if>
+            <if test="user.updateTimeStart != null and user.updateTimeEnd != null ">
+                And U.update_time &gt;= #{user.updateTimeStart} And U.update_time &lt;= DATE_ADD(#{user.updateTimeEnd}, INTERVAL 1 DAY)
+            </if>
+
+        </trim>
+        ORDER BY U.update_time DESC
+    </select>
+
+</mapper>

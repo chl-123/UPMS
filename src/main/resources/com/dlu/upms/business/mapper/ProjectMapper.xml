@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dlu.upms.business.mapper.ProjectMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dlu.upms.business.entity.Project">
+        <id column="id" property="id" />
+        <result column="update_time" property="updateTime" />
+        <result column="del_flag" property="delFlag" />
+        <result column="teacher_id" property="teacherId" />
+        <result column="project_key" property="projectKey" />
+        <result column="project_name" property="projectName" />
+        <result column="select_num_max" property="selectNumMax" />
+        <result column="select_num" property="selectNum" />
+        <result column="college_id" property="collegeId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id,
+        teacher_id,
+        project_key,
+        project_name,
+        select_num_max,
+        select_num,
+        college_id,
+        update_time,
+        del_flag,
+    </sql>
+    <select id="selectProjectListForTeacher" resultType="com.dlu.upms.business.dto.ProjectInfo">
+        SELECT
+        p.id  AS id,
+        p.teacher_id AS teacherId,
+        u.user_name AS userName,
+        p.project_key AS projectKey,
+        p.project_name AS projectName,
+        p.select_num_max AS selectNumMax,
+        p.select_num AS selectNum,
+        p.college_id AS collegeId,
+        p.update_time AS updateTime,
+        p.project_start AS projectStart,
+        p.project_end AS projectEnd,
+        p.trainbase_id AS trainbaseId,
+        b.base_name AS baseName,
+        p.update_time AS updateTime,
+        p.del_flag AS delFlag
+        FROM t_bus_project p
+        LEFT JOIN t_sys_user u on u.id=p.teacher_id AND u.del_flag=0
+        LEFT JOIN t_bd_trainbase b on b.id=p.trainbase_id AND b.del_flag=0
+        WHERE p.del_flag = 0
+        <trim prefix="AND (" suffix=")" prefixOverrides="AND">
+            <if test="project.projectName != null and project.projectName != ''">
+                AND p.project_name like concat(concat('%', #{project.projectName}), '%')
+            </if>
+            <if test="project.projectKey != null and project.projectKey != ''">
+                AND p.project_key = #{project.projectKey}
+            </if>
+            <if test="project.teacherId != null and project.teacherId != ''">
+                AND p.teacher_id = #{project.teacherId}
+            </if>
+            <if test="project.collegeId != null and project.collegeId != ''">
+                AND p.college_id like concat(concat('%', #{project.collegeId}), '%')
+            </if>
+            <if test="project.updateTimeStart != null and project.updateTimeEnd != null ">
+                And p.update_time &gt;= #{project.updateTimeStart} And p.update_time &lt;= DATE_ADD(#{project.updateTimeEnd}, INTERVAL 1 DAY)
+            </if>
+
+        </trim>
+        ORDER BY p.update_time DESC
+    </select>
+    <select id="selectProjectAppraiseListForTeacher" resultType="com.dlu.upms.business.dto.ProjectInfo">
+        SELECT
+        p.id  AS id,
+        p.teacher_id AS teacherId,
+        u.user_name AS userName,
+        p.project_key AS projectKey,
+        p.project_name AS projectName,
+        p.select_num_max AS selectNumMax,
+        p.select_num AS selectNum,
+        p.college_id AS collegeId,
+        p.update_time AS updateTime,
+        p.project_start AS projectStart,
+        p.project_end AS projectEnd,
+        p.trainbase_id AS trainbaseId,
+        b.base_name AS baseName,
+        p.update_time AS updateTime,
+        p.del_flag AS delFlag,
+        ast.id AS appraiseTeacherId,
+        ast.teaching_level AS           teachingLevel,
+        ast.method_useful AS           methodUseful,
+        ast.rewards AS           rewards,
+        ast.problem AS           problem,
+        ast.opinions AS           opinions
+        FROM t_bus_project_select ps
+        LEFT JOIN t_bus_project p on p.id = ps.project_id AND p.del_flag=0
+        LEFT JOIN t_sys_user u on u.id=p.teacher_id AND u.del_flag=0
+        LEFT JOIN t_bd_trainbase b on b.id=p.trainbase_id AND b.del_flag=0
+        LEFT JOIN t_bus_appraise_teacher ast on ast.student_id=ps.student_id AND ast.project_id=ps.project_id AND b.del_flag=0
+
+        WHERE ps.del_flag = 0
+        <trim prefix="AND (" suffix=")" prefixOverrides="AND">
+            <if test="project.projectName != null and project.projectName != ''">
+                AND p.project_name like concat(concat('%', #{project.projectName}), '%')
+            </if>
+            <if test="project.projectKey != null and project.projectKey != ''">
+                AND p.project_key = #{project.projectKey}
+            </if>
+            <if test="project.teacherId != null and project.teacherId != ''">
+                AND p.teacher_id = #{project.teacherId}
+            </if>
+            <if test="project.flag != null and project.flag != ''">
+                AND ast.id != ''
+            </if>
+            <if test="project.studentId != null and project.studentId != ''">
+                AND ps.student_id = #{project.studentId}
+            </if>
+            <if test="project.updateTimeStart != null and project.updateTimeEnd != null ">
+                And p.update_time &gt;= #{project.updateTimeStart} And p.update_time &lt;= DATE_ADD(#{project.updateTimeEnd}, INTERVAL 1 DAY)
+            </if>
+
+        </trim>
+        ORDER BY p.update_time DESC
+    </select>
+    <select id="selectProjectAppraiseListForStudent" resultType="com.dlu.upms.business.dto.ProjectInfo">
+        SELECT
+        p.id  AS id,
+        p.teacher_id AS teacherId,
+        u.user_name AS userName,
+        u2.user_name AS studentName,
+        ps.student_id AS studentId,
+        p.project_key AS projectKey,
+        p.project_name AS projectName,
+        p.select_num_max AS selectNumMax,
+        p.select_num AS selectNum,
+        p.college_id AS collegeId,
+        p.update_time AS updateTime,
+        p.project_start AS projectStart,
+        p.project_end AS projectEnd,
+        p.trainbase_id AS trainbaseId,
+        b.base_name AS baseName,
+        p.update_time AS updateTime,
+        p.del_flag AS delFlag,
+        ast.id AS appraiseStudentId,
+        ast.learning_status AS           learningStatus,
+        ast.job_status AS           jobStatus,
+        ast.problem AS           problem,
+        ast.opinions AS           opinions
+        FROM t_bus_project_select ps
+        LEFT JOIN t_bus_project p on p.id = ps.project_id AND p.del_flag=0
+        LEFT JOIN t_sys_user u on u.id=p.teacher_id AND u.del_flag=0
+        LEFT JOIN t_sys_user u2 on u2.id=ps.student_id AND u2.del_flag=0
+        LEFT JOIN t_bd_trainbase b on b.id=p.trainbase_id AND b.del_flag=0
+        LEFT JOIN t_bus_appraise_student ast on ast.teacher_id=ps.teacher_id AND ast.student_id=ps.student_id AND b.del_flag=0
+
+        WHERE ps.del_flag = 0
+        <trim prefix="AND (" suffix=")" prefixOverrides="AND">
+            <if test="project.projectName != null and project.projectName != ''">
+                AND p.project_name like concat(concat('%', #{project.projectName}), '%')
+            </if>
+            <if test="project.projectKey != null and project.projectKey != ''">
+                AND p.project_key = #{project.projectKey}
+            </if>
+            <if test="project.teacherId != null and project.teacherId != ''">
+                AND ps.teacher_id = #{project.teacherId}
+            </if>
+            <if test="project.flag != null and project.flag != ''">
+                AND ast.id != ''
+            </if>
+            <if test="project.updateTimeStart != null and project.updateTimeEnd != null ">
+                And p.update_time &gt;= #{project.updateTimeStart} And p.update_time &lt;= DATE_ADD(#{project.updateTimeEnd}, INTERVAL 1 DAY)
+            </if>
+
+        </trim>
+        ORDER BY p.update_time DESC
+    </select>
+
+    <select id="selectProjectListForStudent" resultType="com.dlu.upms.business.dto.ProjectInfo">
+        SELECT
+        CASE
+        WHEN SHEET.projectId!='' THEN
+        '1'
+        ELSE
+        '0'
+        END AS isSelect,
+        p.id  AS id,
+        p.teacher_id AS teacherId,
+        u.user_name AS userName,
+        p.project_key AS projectKey,
+        p.project_name AS projectName,
+        p.select_num_max AS selectNumMax,
+        p.select_num AS selectNum,
+        p.college_id AS collegeId,
+        p.update_time AS updateTime,
+        p.project_start AS projectStart,
+        p.project_end AS projectEnd,
+        p.trainbase_id AS trainbaseId,
+        b.base_name AS baseName,
+        p.update_time AS updateTime,
+        SHEET.projectId AS projectSelectId,
+        p.del_flag AS delFlag
+        FROM t_bus_project p
+        LEFT JOIN t_sys_user u on u.id=p.teacher_id AND u.del_flag=0
+        LEFT JOIN t_bd_trainbase b on b.id=p.trainbase_id AND b.del_flag=0
+
+        LEFT JOIN (SELECT ps.id AS projectId,ps.project_id
+        FROM t_bus_project_select ps WHERE ps.del_flag = 0
+        AND ps.student_id= #{project.studentId}
+        ORDER BY update_time DESC ) SHEET
+        ON p.id = SHEET.project_id
+        WHERE p.del_flag = 0
+        <trim prefix="AND (" suffix=")" prefixOverrides="AND">
+            <if test="project.projectName != null and project.projectName != ''">
+                AND p.project_name like concat(concat('%', #{project.projectName}), '%')
+            </if>
+            <if test="project.projectKey != null and project.projectKey != ''">
+                AND p.project_key = #{project.projectKey}
+            </if>
+            <if test="project.collegeId != null and project.collegeId != ''">
+                AND p.college_id like concat(concat('%', #{project.collegeId}), '%')
+            </if>
+            <if test="project.updateTimeStart != null and project.updateTimeEnd != null ">
+                And p.update_time &gt;= #{project.updateTimeStart} And p.update_time &lt;= DATE_ADD(#{project.updateTimeEnd}, INTERVAL 1 DAY)
+            </if>
+
+        </trim>
+        ORDER BY p.update_time DESC
+    </select>
+    <select id="selectProjectSelectedForStudent" resultType="com.dlu.upms.business.dto.ProjectInfo">
+        SELECT
+        p.id  AS id,
+        p.teacher_id AS teacherId,
+        u.user_name AS userName,
+        u2.user_name AS studentName,
+        u2.college_id AS collegeId,
+        U2.is_inside AS isInside,
+        c.college_name AS collegeName,
+        p.project_key AS projectKey,
+        p.project_name AS projectName,
+        p.select_num_max AS selectNumMax,
+        p.select_num AS selectNum,
+        p.college_id AS collegeId,
+        p.update_time AS updateTime,
+        p.project_start AS projectStart,
+        p.project_end AS projectEnd,
+        p.trainbase_id AS trainbaseId,
+        b.base_name AS baseName,
+        p.update_time AS updateTime,
+        p.del_flag AS delFlag,
+        ps.id AS projectSelectId
+        FROM t_bus_project_select ps
+        LEFT JOIN t_bus_project p on p.id = ps.project_id AND p.del_flag=0
+        LEFT JOIN t_sys_user u on u.id=p.teacher_id AND u.del_flag=0
+        LEFT JOIN t_sys_user u2 on u2.id=ps.student_id AND u2.del_flag=0
+        LEFT JOIN t_bd_college c on c.id=U2.college_id AND c.del_flag=0
+        LEFT JOIN t_bd_trainbase b on b.id=p.trainbase_id AND b.del_flag=0
+        WHERE ps.del_flag = 0
+        <trim prefix="AND (" suffix=")" prefixOverrides="AND">
+            <if test="project.projectName != null and project.projectName != ''">
+                AND p.project_name like concat(concat('%', #{project.projectName}), '%')
+            </if>
+            <if test="project.projectKey != null and project.projectKey != ''">
+                AND p.project_key = #{project.projectKey}
+            </if>
+            <if test="project.teacherId != null and project.teacherId != ''">
+                AND p.teacher_id = #{project.teacherId}
+            </if>
+            <if test="project.studentId != null and project.studentId != ''">
+                AND ps.student_id = #{project.studentId}
+            </if>
+            <if test="project.updateTimeStart != null and project.updateTimeEnd != null ">
+                And p.update_time &gt;= #{project.updateTimeStart} And p.update_time &lt;= DATE_ADD(#{project.updateTimeEnd}, INTERVAL 1 DAY)
+            </if>
+
+        </trim>
+        ORDER BY p.project_key DESC
+    </select>
+    <select id="selectStudentScoreForTeacher" resultType="com.dlu.upms.business.dto.ProjectInfo">
+        SELECT
+        p.id  AS id,
+        p.teacher_id AS teacherId,
+        u.user_name AS userName,
+        u2.user_name AS studentName,
+        u2.user_account AS userAccount,
+        u2.user_email AS userEmail,
+        u2.user_phone AS userPhone,
+        u2.is_inside AS isInside,
+        U2.user_sex AS userSex,
+        U.user_sex AS userSex,
+        ps.student_id AS studentId,
+        ps.id AS projectselectId,
+        p.project_key AS projectKey,
+        p.project_name AS projectName,
+        p.update_time AS updateTime,
+        p.del_flag AS delFlag,
+        ps.score AS score,
+        c.college_name AS collegeName
+        FROM t_bus_project_select ps
+        LEFT JOIN t_bus_project p on p.id = ps.project_id AND p.del_flag=0
+        LEFT JOIN t_sys_user u on u.id=p.teacher_id AND u.del_flag=0
+        LEFT JOIN t_sys_user u2 on u2.id=ps.student_id AND u2.del_flag=0
+        LEFT JOIN t_bd_college c on c.id=U2.college_id AND c.del_flag=0
+        WHERE ps.del_flag = 0
+        <trim prefix="AND (" suffix=")" prefixOverrides="AND">
+            <if test="project.projectName != null and project.projectName != ''">
+                AND p.project_name like concat(concat('%', #{project.projectName}), '%')
+            </if>
+            <if test="project.projectKey != null and project.projectKey != ''">
+                AND p.project_key = #{project.projectKey}
+            </if>
+            <if test="project.teacherId != null and project.teacherId != ''">
+                AND ps.teacher_id = #{project.teacherId}
+            </if>
+            <if test="project.updateTimeStart != null and project.updateTimeEnd != null ">
+                And p.update_time &gt;= #{project.updateTimeStart} And p.update_time &lt;= DATE_ADD(#{project.updateTimeEnd}, INTERVAL 1 DAY)
+            </if>
+
+        </trim>
+        ORDER BY p.project_key DESC
+    </select>
+    <select id="selectAppraiseScoreListForStudent" resultType="com.dlu.upms.business.dto.ProjectInfo">
+        SELECT
+        p.id  AS id,
+        p.teacher_id AS teacherId,
+        u.user_name AS userName,
+        u.user_phone AS userPhone,
+        u.is_inside AS isInside,
+        u2.user_name AS studentName,
+        u2.user_account AS userAccount,
+        p.project_key AS projectKey,
+        p.project_name AS projectName,
+        p.college_id AS collegeId,
+        p.update_time AS updateTime,
+        p.project_start AS projectStart,
+        p.project_end AS projectEnd,
+        p.trainbase_id AS trainbaseId,
+        b.base_name AS baseName,
+        p.update_time AS updateTime,
+        p.del_flag AS delFlag,
+        ps.score AS score,
+        ps.student_id AS studentId,
+        ast.id AS appraiseStudentId,
+        ast.learning_status AS           learningStatus,
+        ast.job_status AS           jobStatus,
+        ast.problem AS           problem,
+        ast.opinions AS           opinions
+        FROM t_bus_project_select ps
+        LEFT JOIN t_bus_project p on p.id = ps.project_id AND p.del_flag=0
+        LEFT JOIN t_sys_user u on u.id=p.teacher_id AND u.del_flag=0
+        LEFT JOIN t_sys_user u2 on u2.id=ps.student_id AND u2.del_flag=0
+        LEFT JOIN t_bd_trainbase b on b.id=p.trainbase_id AND b.del_flag=0
+        LEFT JOIN t_bd_college c on c.id=U.college_id AND c.del_flag=0
+        LEFT JOIN t_bus_appraise_student ast on ast.student_id=ps.student_id AND ast.project_id=ps.project_id AND b.del_flag=0
+
+        WHERE ps.del_flag = 0
+        <trim prefix="AND (" suffix=")" prefixOverrides="AND">
+            <if test="project.projectName != null and project.projectName != ''">
+                AND p.project_name like concat(concat('%', #{project.projectName}), '%')
+            </if>
+            <if test="project.projectKey != null and project.projectKey != ''">
+                AND p.project_key = #{project.projectKey}
+            </if>
+            <if test="project.teacherId != null and project.teacherId != ''">
+                AND p.teacher_id = #{project.teacherId}
+            </if>
+            <if test="project.studentId != null and project.studentId != ''">
+                AND ps.student_id = #{project.studentId}
+            </if>
+            <if test="project.flag != null and project.flag != ''">
+                AND ast.id != ''
+            </if>
+            <if test="project.updateTimeStart != null and project.updateTimeEnd != null ">
+                And p.update_time &gt;= #{project.updateTimeStart} And p.update_time &lt;= DATE_ADD(#{project.updateTimeEnd}, INTERVAL 1 DAY)
+            </if>
+
+        </trim>
+        ORDER BY p.project_key DESC
+    </select>
+
+
+</mapper>

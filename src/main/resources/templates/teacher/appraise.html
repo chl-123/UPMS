@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title> - Bootstrap Table</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/font-awesome.css}" rel="stylesheet">
+    <link th:href="@{/css/plugins/bootstrap-table/bootstrap-table.min.css}" rel="stylesheet">
+    <link th:href="@{/css/animate.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">
+    
+
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="example">
+                    <div class="form-inline" style="text-align: center;padding: 20px 0 30px">
+                        <div class="form-group">
+                            <label for="projectKey" style="padding-left: 20px">项目编号：</label>
+                            <input id="projectKey" class="form-control input-sm" STYLE="height: 36px">
+                        </div>
+                        <div class="form-group" >
+                            <label for="projectName">项目名称：</label>
+                            <input id="projectName" class="form-control input-sm" STYLE="height: 36px">
+                        </div>
+
+                        <div class="form-group" id="updateTime">
+                            <label for="updateTimeStart" style="padding-left: 20px">更新时间：</label>
+                            <input id="updateTimeStart" class="form-control layer-date" style="width: 100px;height: 36px">
+                            <div class="form-group">-</div>
+                            <input id="updateTimeEnd" class="form-control layer-date" style="width: 100px ;height: 36px">
+                        </div>
+
+                        <div class="form-group" style="padding-left: 20px">
+                            <button class="btn btn-primary btn-sm" id="queryBtn">查询</button>
+                        </div>
+
+                    </div>
+                    <table id="userTable" >
+
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- End Panel Other -->
+
+    </div>
+    <div id="add-edit" style="display: none;">
+        <form class="layui-form"  action="">
+            <input type="hidden"  id="id" style="width: 240px"   class="layui-input">
+            <input type="hidden"  id="studentId" style="width: 240px"   class="layui-input">
+            <input type="hidden"  id="teacherId" style="width: 240px"   class="layui-input">
+            <input type="hidden"  id="appraiseStudentId" style="width: 240px"   class="layui-input">
+            <div class="layui-form-item">
+                <div class="layui-input-block" STYLE="margin-left: 40px">1.你觉得此次实训老是的教学水平如何？</div>
+                <div class="layui-input-block" STYLE="margin-left: 60px">
+                    <input type="radio" id="learningStatus" name="learningStatus" value="0" title="好" checked>
+                    <input type="radio" id="learningStatus" name="learningStatus" value="1" title="一般" >
+                    <input type="radio" id="learningStatus" name="learningStatus" value="2" title="差" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block" STYLE="margin-left: 40px">2.你觉得实训老师的实训方法及过程是否合适自己？</div>
+                <div class="layui-input-block" STYLE="margin-left: 60px">
+                    <input type="radio" id="jobStatus" name="jobStatus" value="0" title="适合" checked>
+                    <input type="radio" id="jobStatus" name="jobStatus" value="1" title="一般" >
+                    <input type="radio" id="jobStatus" name="jobStatus" value="2" title="不合适" >
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <div class="layui-input-block" STYLE="margin-left: 40px">3.你觉得此次实训是否存在一些问题？(如果存在请详细描述)</div>
+                <label class="layui-form-label" STYLE="margin-left: 10px">答</label>
+                <div class="layui-input-block" STYLE="margin-left: 60px">
+                    <textarea name="desc" id="problem" class="layui-textarea" STYLE="width: 300px;min-height: 50px;"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <div class="layui-input-block" STYLE="margin-left: 40px">4.请在下方写下对实训教师以及实训课程的宝贵意见。</div>
+                <label class="layui-form-label" STYLE="margin-left: 10px">答</label>
+                <div class="layui-input-block" STYLE="margin-left: 60px">
+                    <textarea name="desc"  id="opinions" class="layui-textarea" STYLE="width: 300px;min-height: 50px;"></textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item" STYLE="padding: 20px">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="save" id="submitBtn">提交</button>
+                    <button  class="layui-btn layui-btn-primary" id="closeBtn" >取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- 全局js -->
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+
+    <!-- 自定义js -->
+    <script th:src="@{/js/content.js}"></script>
+    <script th:src="@{/js/common.js}"></script>
+
+    <!-- Bootstrap table -->
+    <script th:src="@{/js/plugins/bootstrap-table/bootstrap-table.min.js}"></script>
+    <script th:src="@{/js/plugins/bootstrap-table/bootstrap-table-mobile.min.js}"></script>
+    <script th:src="@{/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js}"></script>
+
+    <script th:src="@{/layer/layer.js}"></script>
+    <script th:src="@{/layui/layui.js}"></script>
+    <script th:src="@{/js/xm-select.js}"></script>
+
+
+    <script type="text/javascript">
+        $(function () {
+            //初始化表格
+            var oTable = new TableInit();
+            oTable.Init();
+        });
+
+        function TableInit() {
+            var oTableInit = new Object();
+            //初始化Table
+            oTableInit.Init = function () {
+                $('#userTable').bootstrapTable({
+                    // 请求后台的URL（*）
+                    url:"http://localhost:8080/business/project/appraiseStudent/list",
+                    method: 'GET',           //请求方式（*）
+                    striped: true,           //是否显示行间隔色
+                    cache: false,            //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                    pagination: true,          //是否显示分页（*）
+                    sortOrder: "asc",          //排序方式
+                    queryParamsType: '',
+                    dataType: 'json',
+                    paginationShowPageGo: true,
+                    showJumpto: true,
+                    pageNumber: 1, //初始化加载第一页，默认第一页
+                    queryParams: queryParams,//请求服务器时所传的参数
+                    sidePagination: 'server',//指定服务器端分页
+                    pageSize: 10,//单页记录数
+                    pageList: [5,10, 20, 30, 40],//分页步进值
+                    search: false, //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                    silent: true,
+                    showRefresh: false,         //是否显示刷新按钮
+                    showToggle: false,
+                    minimumCountColumns: 2,       //最少允许的列数
+                    uniqueId: "id",           //每一行的唯一标识，一般为主键列
+                    columns: [{
+                        field: 'xuhao',
+                        title: '序号',
+                        align: 'center',
+                        formatter: function (value, row, index) {
+                            return index + 1;
+                        }
+                    },
+                    {
+                        field: 'projectKey',
+                        title: '项目编号',
+                        align: 'center'
+                    },
+                    {
+                        field: 'projectName',
+                        title: '项目名称',
+                        align: 'center',
+                        width: '235px'
+                    },
+                    {
+                        field: 'studentName',
+                        title: '学生名称',
+                        align: 'center',
+                        width: '235px'
+                    },
+                    {
+                        field: 'projectStart',
+                        title: '项目开始时间',
+                        align: 'center',
+                    },
+                    {
+                        field: 'projectEnd',
+                        title: '项目结束时间',
+                        align: 'center',
+                    },
+                    {
+                        field: 'baseName',
+                        title: '基地',
+                        align: 'center',
+                    },
+                        {
+                            field: 'appraiseStudentId',
+                            title: '是否评价',
+                            align: 'center',
+                            formatter: function(value, row, index) {
+                                var actions =''
+                                if(row.appraiseStudentId!=''){
+                                    actions='已评价'
+                                }
+
+                                if(row.appraiseStudentId==''){
+                                    actions='未评价'
+                                }
+                                return actions
+                            }
+                        },{
+                            field: 'operation',
+                            title: '操作',
+                            align: 'center',
+                            formatter: function(value, row, index) {
+                                var actions = [];
+                                if(row.appraiseStudentId!=''){
+                                    actions.push('<a class="btn btn-success btn-xs "  href="javascript:void(0)"  onclick="edit(\'' + row.id+'\',\'' + row.studentId+'\',\'' + row.teacherId+'\',\'' + row.learningStatus+'\',\'' + row.jobStatus+'\',\'' + row.problem+'\',\'' + row.opinions+'\',\'' + row.appraiseStudentId+'\')"><i class="fa fa-edit"></i>评价</a> ');
+                                }
+                                if(row.appraiseStudentId==''){
+                                    actions.push('<a class="btn btn-danger btn-xs "  href="javascript:void(0)" onclick="addInfo(\'' + row.id+'\',\'' + row.studentId+'\',\'' + row.projectId+'\')"><i class="fa fa-remove"></i>评价</a> ');
+                                }
+                                return actions.join('');
+                            }
+                        }],
+                    responseHandler: function (res) { //后台返回的结果
+                        if(res.code == "200"){
+                            var userInfo = res.data;
+                            var NewData = [];
+                            if (userInfo.length) {
+                                for (var i = 0; i < userInfo.length; i++) {
+                                    var dataNewObj = {
+                                        'id': '',
+                                        "projectKey": '',
+                                        'projectName': '',
+                                        'collegeList': [],
+                                        'colleges': '',
+                                        'studentId': '',
+                                        'projectStart': '',
+                                        'projectEnd': '',
+                                        'studentName': '',
+                                        'trainbaseId': '',
+                                        'baseName': '',
+                                        'teacherId': '',
+                                        'appraiseStudentId':'',
+                                        'learningStatus':'',
+                                        'jobStatus':'',
+                                        'problem':'',
+                                        'opinions':'',
+                                        'projectSelectId':''
+                                    };
+                                    dataNewObj.appraiseStudentId = userInfo[i].appraiseStudentId;
+                                    dataNewObj.projectSelectId = userInfo[i].projectSelectId;
+                                    dataNewObj.xuhao=i;
+                                    dataNewObj.id = userInfo[i].id;
+                                    dataNewObj.projectKey = userInfo[i].projectKey;
+                                    dataNewObj.projectName = userInfo[i].projectName;
+                                    dataNewObj.studentName = userInfo[i].studentName;
+                                    dataNewObj.trainbaseId = userInfo[i].trainbaseId;
+                                    dataNewObj.baseName = userInfo[i].baseName;
+                                    dataNewObj.teacherId = userInfo[i].teacherId;
+                                    dataNewObj.learningStatus = userInfo[i].learningStatus;
+                                    dataNewObj.jobStatus = userInfo[i].jobStatus;
+                                    dataNewObj.problem = userInfo[i].problem;
+                                    dataNewObj.opinions = userInfo[i].opinions;
+                                    dataNewObj.projectStart = userInfo[i].projectStart;
+                                    dataNewObj.projectEnd = userInfo[i].projectEnd;
+                                    dataNewObj.studentId = userInfo[i].studentId;
+
+                                    var collegeList=userInfo[i].collegeList
+                                    for (var j = 0; j < collegeList.length; j++){
+                                        dataNewObj.collegeList.push(collegeList[j])
+                                        if(collegeList[j].selected){
+                                            dataNewObj.colleges+=collegeList[j].name+' ';
+                                        }
+                                    }
+                                    NewData.push(dataNewObj);
+                                }
+
+                            }
+                            var data = {
+                                total:res.count,
+                                rows: NewData
+                            };
+
+                            return data;
+                        }
+
+                    }
+
+                });
+            };
+
+            // 得到查询的参数
+            function queryParams(params) {
+                var projectKey        = $("#projectKey").val();
+                var projectName         = $("#projectName").val();
+
+                var temp = {  //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                    current: params.pageNumber,
+                    size: params.pageSize,
+                    projectKey      :     projectKey       ,
+                    projectName       :     projectName        ,
+                };
+                return temp;
+            }
+
+            return oTableInit;
+        }
+
+
+        //刷新表格
+        $('#queryBtn').click(function () {
+            $('#userTable').bootstrapTable('refresh', {url: '/business/project/appraiseStudent/list'});//url为后台action
+        })
+
+        function addInfo(id,studentId,teacherId) {
+            layer.open({
+                type: 1,
+                title:"编辑",
+                closeBtn: false,
+                shift: 2,
+                area: ['500px', '500px'],
+                shadeClose: true,
+                content: $("#add-edit"),
+                success: function(layero, index){
+                    $("#add-edit").val('0')
+                    $("#add-edit").find('#id').val(id)
+                    $("#add-edit").find('#studentId').val(studentId)
+                    $("#add-edit").find('#teacherId').val(teacherId)
+                },
+            });
+        }
+        function edit(id,studentId,teacherId,learningStatus,jobStatus,problem,opinions,appraiseStudentId) {
+            layer.open({
+                type: 1,
+                title:"编辑",
+                closeBtn: false,
+                shift: 2,
+                area: ['500px', '500px'],
+                shadeClose: true,
+                content: $("#add-edit"),
+                success: function(layero, index){
+                    $("#add-edit").val('1')
+                    $("#add-edit").find('#id').val(id)
+                    $("#add-edit").find('#studentId').val(studentId)
+                    $("#add-edit").find('#teacherId').val(teacherId)
+                    $("#add-edit").find('#appraiseStudentId').val(appraiseStudentId)
+                    $("#add-edit").find('#problem').val(problem)
+                    $("#add-edit").find('#opinions').val(opinions)
+                    if(learningStatus=='0'){
+                        $("input[name='learningStatus']")[0].checked = true;
+                    }else if(learningStatus=='1'){
+                        $("input[name='learningStatus']")[1].checked = true;
+                    } else if(learningStatus=='2'){
+                        $("input[name='learningStatus']")[2].checked = true;
+                    }
+                    if(jobStatus=='0'){
+                        $("input[name='jobStatus']")[0].checked = true;
+                    }else if(jobStatus=='1'){
+                        $("input[name='jobStatus']")[1].checked = true;
+                    }else if(jobStatus=='2'){
+                        $("input[name='jobStatus']")[2].checked = true;
+                    }
+                    layui.form.render('radio');
+                },
+                yes:function(){
+                }
+            });
+        }
+
+        layui.use(['layer', 'form'], function () {
+            var layer = layui.layer,
+                form = layui.form;
+            // 提交监听事件
+            form.on('submit(save)', function () {
+                var id            = $("#add-edit").find('#id').val()
+                var studentId    = $("#add-edit").find('#studentId').val()
+                var teacherId   = $("#add-edit").find('#teacherId').val()
+                var opinions  = $("#add-edit").find('#opinions').val()
+                var problem  = $("#add-edit").find('#problem').val()
+                var appraiseStudentId  = $("#add-edit").find('#appraiseStudentId').val()
+                var learningStatus = $('input[name="learningStatus"]:checked ').val();
+                var jobStatus = $('input[name="jobStatus"]:checked ').val();
+                var project={
+                    id:appraiseStudentId,
+                    projectId:id,
+                    studentId:studentId,
+                    teacherId:teacherId,
+                    problem:problem,
+                    learningStatus:learningStatus,
+                    jobStatus:jobStatus,
+                    opinions:opinions
+                }
+                if($("#add-edit").val()=='1'){
+                    var url="http://localhost:8080/business/appraiseStudent/update";
+                    submit(JSON.stringify(project),url);
+                }
+                else if($("#add-edit").val()=='0'){
+                    var url="http://localhost:8080/business/appraiseStudent/create";
+                    submit(JSON.stringify(project),url);
+                }
+
+                return false;
+            })
+            var obj = document.getElementById('closeBtn');
+            obj.addEventListener('click', function cancel(){
+                CloseWin();
+            });
+        })
+        //提交
+        function submit(dateInfo,url){
+            $.ajax({
+                "url":url,
+                "type":"post",
+                "data":dateInfo,
+                "dataType":"json",
+                "contentType":"application/json;charset=UTF-8",
+                "success":function (response) {
+                    var result=response.code;
+                    if(result==200){
+                        layer.msg(response.msg);
+                        CloseWin()
+                    }
+                    else {
+                        layer.msg(response.msg);
+                        CloseWin()
+                    }
+                },
+                "error":function (response) {
+                    layer.msg(response.code+" "+response.msg);
+                }
+            })
+        };
+
+
+        //关闭页面
+        function CloseWin(){
+            $('#userTable').bootstrapTable('refresh', {url: '/business/project/appraiseStudent/list'});//url为后台action
+            layer.closeAll();
+        }
+
+
+
+
+    </script>
+
+    
+    
+
+</body>
+
+</html>
