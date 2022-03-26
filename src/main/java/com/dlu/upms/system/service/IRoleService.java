@@ -29,4 +29,5 @@ public interface IRoleService extends IService<Role> {
     boolean createRoleInfo(CreateRole role);
 
     List<RoleInfo> selectRoleList(QueryRole role);
+    public Role queryRoleByRoleKey(String roleKey);
 }

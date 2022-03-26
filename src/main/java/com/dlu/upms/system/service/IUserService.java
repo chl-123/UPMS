@@ -7,6 +7,7 @@ import com.dlu.upms.system.dto.QueryUser;
 import com.dlu.upms.system.dto.UpdateUser;
 import com.dlu.upms.system.dto.UserInfo;
 import com.dlu.upms.system.entity.User;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -31,4 +32,6 @@ public interface IUserService extends IService<User> {
     List<UserInfo> selectList(QueryUser user);
 
     public User queryUserByAccount(String userAccount);
+
+    boolean batchCreateUser(String flag, MultipartFile file) throws Exception;
 }

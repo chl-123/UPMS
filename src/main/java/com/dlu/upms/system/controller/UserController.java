@@ -3,8 +3,6 @@ package com.dlu.upms.system.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.dlu.upms.basicData.dto.QueryTrainbase;
-import com.dlu.upms.basicData.dto.TrainbaseInfo;
 import com.dlu.upms.basicData.dto.xmSelect;
 import com.dlu.upms.common.base.PageResult;
 import com.dlu.upms.common.base.Result;
@@ -15,6 +13,7 @@ import com.dlu.upms.system.dto.UserInfo;
 import com.dlu.upms.system.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,6 +85,17 @@ public class UserController {
 
         }else {
             return new Result<>().error("更新失败，请重试");
+        }
+    }
+    @PostMapping("/batch")
+    public Result<?> batchCreate(String flag, MultipartFile file) throws Exception {
+
+        boolean result=iUserService.batchCreateUser(flag,file);
+        if (result) {
+            return new Result<>().success("添加成功");
+
+        }else {
+            return new Result<>().error("添加失败，请重试");
         }
     }
 }

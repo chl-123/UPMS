@@ -125,4 +125,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         List<RoleInfo> roleInfos = roleMapper.selectRoleList(role);
         return roleInfos;
     }
+    public Role queryRoleByRoleKey(String roleKey) {
+        QueryWrapper<Role> ew = new QueryWrapper<>();
+        ew.and(e -> e.eq("role_key", roleKey));
+        return this.getOne(ew);
+    }
 }
