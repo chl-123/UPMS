@@ -24,14 +24,8 @@
                             <label><i class="fa fa-lock"></i></label>
                             <input type="password" name="password" class="inp" placeholder="请输入密码" >
                         </div>
-                        <div class="group sm-font">
-                            <label for="remember">
-                            <input type="checkbox" id="remember">
-                            <span class="option"><span class="option-item"><span class="opspan"></span></span></span>
-                            <span class="check-text">记住我</span>
-                            </label>
-                        </div>
-                        <div class="group" >
+
+                        <div class="group" STYLE="margin-top: 40px">
                             <button class="submit" id="login" STYLE="display: inline">登陆</button>
                             <button class="submit" onclick="window.location.href='http://localhost:8080/register'" STYLE="margin-left:30px;display: inline;background: #5FB878">注册</button>
                         </div>
@@ -50,15 +44,6 @@
     $(function () {
         $("#login").click(function () {
 
-            // //收集表单项中用户输入的数据
-            //
-            // var name=$.trim($("#login [name=name]").val());
-            // var url=$.trim($("#login [name=url]").val());
-            // 单选按钮要定位到“被选中” 的那一个
-            let rememberMe = 0;
-            if ($('#remember').prop("checked") === true) {
-                rememberMe = 1;
-            }
             let userAccount = $("input[name='username']").val();
             let userPassword = $("input[name='password']").val();
 
@@ -72,8 +57,7 @@
                     "type": "post",
                     "data": {
                         "userAccount": userAccount,
-                        "userPassword": userPassword,
-                        "rememberMe": rememberMe
+                        "userPassword": userPassword
                     },
                     "dataType": "json",
                     "success": function (response) {

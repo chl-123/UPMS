@@ -60,36 +60,36 @@
         <!-- End Panel Other -->
 
     </div>
-    <div id="add-edit" style="display: none;">
+    <div id="add-edit" style="display: none;padding: 20px 0px 0px 0px">
         <form class="layui-form"  action="">
             <div class="layui-form-item">
-                <div class="layui-input-block" STYLE="margin-left: 40px">1.你觉得此次实训老是的教学水平如何？</div>
+                <div class="layui-input-block" STYLE="margin-left: 40px">1.该生在实训过程中的课程表现情况如何？</div>
                 <div class="layui-input-block" STYLE="margin-left: 60px">
-                    <input type="radio" id="learningStatus" name="learningStatus" value="0" title="好" checked readonly>
-                    <input type="radio" id="learningStatus" name="learningStatus" value="1" title="一般" readonly>
-                    <input type="radio" id="learningStatus" name="learningStatus" value="2" title="差" readonly>
+                    <input type="radio" id="learningStatus" name="learningStatus" value="0" title="好" checked disabled style="background-color: #00FF00">
+                    <input type="radio" id="learningStatus" name="learningStatus" value="1" title="一般" disabled>
+                    <input type="radio" id="learningStatus" name="learningStatus" value="2" title="差" disabled>
                 </div>
             </div>
             <div class="layui-form-item">
-                <div class="layui-input-block" STYLE="margin-left: 40px">2.你觉得实训老师的实训方法及过程是否合适自己？</div>
+                <div class="layui-input-block" STYLE="margin-left: 40px">2.该生作业完成情况如何？</div>
                 <div class="layui-input-block" STYLE="margin-left: 60px">
-                    <input type="radio" id="jobStatus" name="jobStatus" value="0" title="适合" checked readonly>
-                    <input type="radio" id="jobStatus" name="jobStatus" value="1" title="一般" readonly>
-                    <input type="radio" id="jobStatus" name="jobStatus" value="2" title="不合适" readonly>
+                    <input type="radio" id="jobStatus" name="jobStatus" value="0" title="很好" disabled>
+                    <input type="radio" id="jobStatus" name="jobStatus" value="1" title="一般" disabled>
+                    <input type="radio" id="jobStatus" name="jobStatus" value="2" title="差" disabled>
                 </div>
             </div>
             <div class="layui-form-item layui-form-text">
-                <div class="layui-input-block" STYLE="margin-left: 40px">3.你觉得此次实训是否存在一些问题？(如果存在请详细描述)</div>
+                <div class="layui-input-block" STYLE="margin-left: 40px">3.该生存在的一些问题</div>
                 <label class="layui-form-label" STYLE="margin-left: 10px">答</label>
                 <div class="layui-input-block" STYLE="margin-left: 60px">
-                    <textarea  readonly name="desc" id="problem" class="layui-textarea" STYLE="width: 300px;min-height: 50px;"></textarea>
+                    <textarea  readonly="readonly" name="desc" id="problem" class="layui-textarea" STYLE="width: 300px;min-height: 50px;"></textarea>
                 </div>
             </div>
             <div class="layui-form-item layui-form-text">
-                <div class="layui-input-block" STYLE="margin-left: 40px">4.请在下方写下对实训教师以及实训课程的宝贵意见。</div>
+                <div class="layui-input-block" STYLE="margin-left: 40px">4.指导意见及期望。</div>
                 <label class="layui-form-label" STYLE="margin-left: 10px">答</label>
                 <div class="layui-input-block" STYLE="margin-left: 60px">
-                    <textarea readonly name="desc"  id="opinions" class="layui-textarea" STYLE="width: 300px;min-height: 50px;"></textarea>
+                    <textarea readonly="readonly" name="desc"  id="opinions" class="layui-textarea" STYLE="width: 300px;min-height: 50px;"></textarea>
                 </div>
             </div>
         </form>
@@ -204,13 +204,13 @@
                             align: 'center',
                             formatter: function(value, row, index) {
                                 var actions = [];
-                                actions.push('<a class="btn btn-default btn-xs "  href="javascript:void(0)"  onclick="edit(\'' + row.learningStatus+'\',\'' + row.jobStatus+'\',\'' + row.problem+'\',\'' + row.opinions+'\')"><i class="fa fa-edit"></i>查看</a> ');
+                                actions.push('<a class="btn btn-success btn-xs "  href="javascript:void(0)"  onclick="edit(\'' + row.learningStatus+'\',\'' + row.jobStatus+'\',\'' + row.problem+'\',\'' + row.opinions+'\')"><i class="fa fa-eye"></i>查看</a> ');
                                 return actions.join('');
                             }
                         }],
                     responseHandler: function (res) { //后台返回的结果
                         if(res.code=="500"){
-                            window.location.href ="http://localhost:8080/login";
+                            parent.location.href ="http://localhost:8080/login";
                         }
                         if(res.code == "200"){
                             var userInfo = res.data;
@@ -288,7 +288,7 @@
         function edit(learningStatus,jobStatus,problem,opinions) {
             layer.open({
                 type: 1,
-                title:"编辑",
+                title:"老师对学生的反馈意见",
                 closeBtn: false,
                 shift: 2,
                 area: ['500px', '500px'],

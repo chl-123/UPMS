@@ -25,8 +25,9 @@ public class MyMvcConfig implements WebMvcConfigurer{
                 registry.addViewController("/appraise/appraiseStudent").setViewName("admin/appraise/appraiseStudent");
                 registry.addViewController("/appraise/appraiseTeacher").setViewName("admin/appraise/appraiseTeacher");
                 registry.addViewController("/admin").setViewName("/admin/admin");
+                registry.addViewController("/projectAdmin").setViewName("/projectAdmin/projectAdmin");
                 registry.addViewController("/login").setViewName("/login");
-                registry.addViewController("/register").setViewName("/register");
+                registry.addViewController("/register").setViewName("register");
                 registry.addViewController("/teacher/project").setViewName("teacher/project");
                 registry.addViewController("/teacher/appraise").setViewName("teacher/appraise");
                 registry.addViewController("/teacher/feedback").setViewName("teacher/feedback");
@@ -39,6 +40,7 @@ public class MyMvcConfig implements WebMvcConfigurer{
                 registry.addViewController("/basicInfo/student").setViewName("basicInfo/student");
                 registry.addViewController("/basicInfo/project").setViewName("basicInfo/project");
                 registry.addViewController("/basicInfo/teacher").setViewName("basicInfo/teacher");
+                registry.addViewController("/basicInfo/score").setViewName("basicInfo/score");
                 registry.addViewController("/basicInfo/feedbackStudent").setViewName("basicInfo/feedbackStudent");
                 registry.addViewController("/basicInfo/feedbackTeacher").setViewName("basicInfo/feedbackTeacher");
                 registry.addViewController("/basicInfo/selectCount").setViewName("basicInfo/selectCount");

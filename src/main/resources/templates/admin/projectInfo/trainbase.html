@@ -67,7 +67,7 @@
 
         <!-- End Panel Other -->
     </div>
-    <div id="add-edit" style="display: none;">
+    <div id="add-edit" style="display: none;padding: 10px 20px 0px 20px">
         <form class="layui-form"  action="">
             <input type="hidden"  id="id" style="width: 240px"   class="layui-input">
             <div class="layui-form-item center" >
@@ -89,7 +89,7 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label" style="width: 100px">校内(校外)：</label>
+                <label class="layui-form-label" style="width: 120px;margin-left: -20px">校内(校外)：</label>
                 <div class="layui-input-block">
                     <input type="radio" id="isInside" name="isInside" value="0" title="校内" checked>
                     <input type="radio" id="isInside" name="isInside" value="1" title="校外" >
@@ -156,9 +156,6 @@
                     minimumCountColumns: 2,       //最少允许的列数
                     uniqueId: "id",           //每一行的唯一标识，一般为主键列
                     columns: [{
-                        checkbox: true,
-                        visible: true
-                    }, {
                         field: 'xuhao',
                         title: '序号',
                         align: 'center',
@@ -214,6 +211,10 @@
                             }
                         }],
                     responseHandler: function (res) { //后台返回的结果
+                        if(res.code=="10000011"){
+                            layer.msg(res.msg);
+                            parent.location.href ="http://localhost:8080/login";
+                        }
                         if(res.code == "200"){
                             var userInfo = res.data;
                             var NewData = [];
@@ -285,10 +286,10 @@
         function addInfo() {
             layer.open({
                 type: 1,
-                title:"编辑",
+                title:"添加",
                 closeBtn: false,
                 shift: 2,
-                area: ['400px', '300px'],
+                area: ['400px', '400px'],
                 shadeClose: true,
                 content: $("#add-edit"),
                 success: function(layero, index){
@@ -302,7 +303,7 @@
                 title:"编辑",
                 closeBtn: false,
                 shift: 2,
-                area: ['400px', '300px'],
+                area: ['400px', '350px'],
                 shadeClose: true,
                 content: $("#add-edit"),
                 success: function(layero, index){

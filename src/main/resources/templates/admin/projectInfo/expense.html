@@ -53,26 +53,26 @@
 
         <!-- End Panel Other -->
     </div>
-    <div id="add-edit" style="display: none;">
+    <div id="add-edit" style="display: none;padding: 10px 20px 0px 20px">
         <form class="layui-form"  action="">
             <input type="hidden"  id="id" style="width: 240px"   class="layui-input">
             <input type="hidden"  id="projectId" style="width: 240px"   class="layui-input">
             <div class="layui-form-item" style="margin-top: 20px">
                 <label class="layui-form-label" style="width: 100px">场地费用：</label>
                 <div class="layui-input-block">
-                    <input type="text"  id="siteCost" style="width: 240px"  class="layui-input" lay-verify="required" required>
+                    <input type="text"  id="siteCost" style="width: 240px"  class="layui-input" lay-verify="required|number" required>
                 </div>
             </div>
             <div class="layui-form-item center" >
                 <label class="layui-form-label" style="width: 100px" >老师工资：</label>
                 <div class="layui-input-block">
-                    <input type="text"  id="teacherSalary" style="width: 240px"   class="layui-input"  lay-verify="required" required>
+                    <input type="text"  id="teacherSalary" style="width: 240px"   class="layui-input"  lay-verify="required|number" required>
                 </div>
             </div>
             <div class="layui-form-item center" >
                 <label class="layui-form-label" style="width: 100px" >其他费用：</label>
                 <div class="layui-input-block">
-                    <input type="text"  id="other" style="width: 240px"   class="layui-input"  lay-verify="required" required>
+                    <input type="text"  id="other" style="width: 240px"   class="layui-input"  lay-verify="required|number" required>
                 </div>
             </div>
             <div class="layui-form-item" STYLE="padding: 20px">
@@ -138,9 +138,6 @@
                     minimumCountColumns: 2,       //最少允许的列数
                     uniqueId: "id",           //每一行的唯一标识，一般为主键列
                     columns: [{
-                        checkbox: true,
-                        visible: true
-                    }, {
                         field: 'xuhao',
                         title: '序号',
                         align: 'center',
@@ -280,6 +277,10 @@
                             }
                         }],
                     responseHandler: function (res) { //后台返回的结果
+                        if(res.code=="10000011"){
+                            layer.msg(res.msg);
+                            parent.location.href ="http://localhost:8080/login";
+                        }
                         if(res.code == "200"){
                             var userInfo = res.data;
                             var NewData = [];
@@ -358,7 +359,7 @@
                 title:"编辑",
                 closeBtn: false,
                 shift: 2,
-                area: ['500px', '500px'],
+                area: ['400px', '400px'],
                 shadeClose: true,
                 content: $("#add-edit"),
                 success: function(layero, index){
@@ -374,7 +375,7 @@
                 title:"编辑",
                 closeBtn: false,
                 shift: 2,
-                area: ['500px', '500px'],
+                area: ['400px', '400px'],
                 shadeClose: true,
                 content: $("#add-edit"),
                 success: function(layero, index){
@@ -395,7 +396,7 @@
             }, function(){
                 $.ajax({
                     "url":"http://localhost:8080/business/projectExpense/delete/"+id,
-                    "type":"get",
+                    "type":"post",
                     "dataType":"json",
                     "success":function (response) {
                         var result=response.code;
@@ -475,7 +476,7 @@
 
 
         function CloseWin(){
-            $('#userTable').bootstrapTable('refresh', {url: '/business/project/list'});//url为后台action
+            $('#userTable').bootstrapTable('refresh', {url: '/business/projectExpense/list'});//url为后台action
             layer.closeAll();
         }
 

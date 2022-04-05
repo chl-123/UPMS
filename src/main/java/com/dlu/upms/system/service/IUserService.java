@@ -9,6 +9,8 @@ import com.dlu.upms.system.dto.UserInfo;
 import com.dlu.upms.system.entity.User;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -25,7 +27,7 @@ public interface IUserService extends IService<User> {
 
     boolean deleteUserInfo(String id, String userRoleId);
 
-    boolean updateUserInfo(UpdateUser user);
+    boolean updateUserInfo(UpdateUser user, HttpSession session, HttpServletRequest request);
 
     boolean createUserInfo(CreateUser user);
 
@@ -34,4 +36,8 @@ public interface IUserService extends IService<User> {
     public User queryUserByAccount(String userAccount);
 
     boolean batchCreateUser(String flag, MultipartFile file) throws Exception;
+
+    boolean register(CreateUser user);
+
+    boolean changePwd(UpdateUser user);
 }

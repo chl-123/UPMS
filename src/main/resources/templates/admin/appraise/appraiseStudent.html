@@ -60,14 +60,14 @@
         <!-- End Panel Other -->
 
     </div>
-    <div id="add-edit" style="display: none;">
+    <div id="add-edit" style="display: none;padding: 10px 0px 0px 0px">
         <form class="layui-form"  action="">
             <input type="hidden"  id="id" style="width: 240px"   class="layui-input">
             <input type="hidden"  id="studentId" style="width: 240px"   class="layui-input">
             <input type="hidden"  id="teacherId" style="width: 240px"   class="layui-input">
             <input type="hidden"  id="appraiseStudentId" style="width: 240px"   class="layui-input">
             <div class="layui-form-item">
-                <div class="layui-input-block" STYLE="margin-left: 40px">1.你觉得此次实训老是的教学水平如何？</div>
+                <div class="layui-input-block" STYLE="margin-left: 40px">1.该生在实训过程中的课程表现情况如何？</div>
                 <div class="layui-input-block" STYLE="margin-left: 60px">
                     <input type="radio" id="learningStatus" name="learningStatus" value="0" title="好" checked>
                     <input type="radio" id="learningStatus" name="learningStatus" value="1" title="一般" >
@@ -75,22 +75,22 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <div class="layui-input-block" STYLE="margin-left: 40px">2.你觉得实训老师的实训方法及过程是否合适自己？</div>
+                <div class="layui-input-block" STYLE="margin-left: 40px">2.该生作业完成情况如何？</div>
                 <div class="layui-input-block" STYLE="margin-left: 60px">
-                    <input type="radio" id="jobStatus" name="jobStatus" value="0" title="适合" checked>
+                    <input type="radio" id="jobStatus" name="jobStatus" value="0" title="很好" checked>
                     <input type="radio" id="jobStatus" name="jobStatus" value="1" title="一般" >
-                    <input type="radio" id="jobStatus" name="jobStatus" value="2" title="不合适" >
+                    <input type="radio" id="jobStatus" name="jobStatus" value="2" title="差" >
                 </div>
             </div>
             <div class="layui-form-item layui-form-text">
-                <div class="layui-input-block" STYLE="margin-left: 40px">3.你觉得此次实训是否存在一些问题？(如果存在请详细描述)</div>
+                <div class="layui-input-block" STYLE="margin-left: 40px">3.该生存在的一些问题？(如果存在请详细描述)</div>
                 <label class="layui-form-label" STYLE="margin-left: 10px">答</label>
                 <div class="layui-input-block" STYLE="margin-left: 60px">
                     <textarea name="desc" id="problem" class="layui-textarea" STYLE="width: 300px;min-height: 50px;"></textarea>
                 </div>
             </div>
             <div class="layui-form-item layui-form-text">
-                <div class="layui-input-block" STYLE="margin-left: 40px">4.请在下方写下对实训教师以及实训课程的宝贵意见。</div>
+                <div class="layui-input-block" STYLE="margin-left: 40px">4.请在下方写下对该生的指导意见及期望。</div>
                 <label class="layui-form-label" STYLE="margin-left: 10px">答</label>
                 <div class="layui-input-block" STYLE="margin-left: 60px">
                     <textarea name="desc"  id="opinions" class="layui-textarea" STYLE="width: 300px;min-height: 50px;"></textarea>
@@ -228,6 +228,10 @@
                             }
                         }],
                     responseHandler: function (res) { //后台返回的结果
+                        if(res.code=="10000011"){
+                            layer.msg(res.msg);
+                            parent.location.href ="http://localhost:8080/login";
+                        }
                         if(res.code == "200"){
                             var userInfo = res.data;
                             var NewData = [];
@@ -348,7 +352,7 @@
                 title:"编辑",
                 closeBtn: false,
                 shift: 2,
-                area: ['500px', '500px'],
+                area: ['500px', '550px'],
                 shadeClose: true,
                 content: $("#add-edit"),
                 success: function(layero, index){

@@ -13,6 +13,12 @@ import java.util.List;
 public class Charts {
     private String name;
     private int value1;
+    private int value;
+    private int cou1;
+    private int cou2;
+    private int cou3;
+    private int cou4;
+    private int cou5;
     private float value2;
     private List<String> nameList=new ArrayList<>();
     private List<Integer> valueList1=new ArrayList<>();

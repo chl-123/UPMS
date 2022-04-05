@@ -37,13 +37,6 @@
                             <input id="projectName" class="form-control input-sm" STYLE="height: 36px">
                         </div>
 
-                        <div class="form-group" id="updateTime">
-                            <label for="updateTimeStart" style="padding-left: 20px">更新时间：</label>
-                            <input id="updateTimeStart" class="form-control layer-date" style="width: 100px;height: 36px">
-                            <div class="form-group">-</div>
-                            <input id="updateTimeEnd" class="form-control layer-date" style="width: 100px ;height: 36px">
-                        </div>
-
                         <div class="form-group" style="padding-left: 20px">
                             <button class="btn btn-primary btn-sm" id="queryBtn">查询</button>
                         </div>
@@ -60,7 +53,7 @@
         <!-- End Panel Other -->
 
     </div>
-    <div id="add-edit" style="display: none;">
+    <div id="add-edit" style="display: none;padding: 10px 10px 0px 10px">
         <form class="layui-form"  action="">
             <input type="hidden"  id="id"    class="layui-input">
             <input type="hidden"  id="studentId"   class="layui-input">
@@ -69,7 +62,7 @@
             <div class="layui-form-item center" >
                 <label class="layui-form-label" style="width: 100px" >成绩：</label>
                 <div class="layui-input-block">
-                    <input type="text"  id="score" style="width: 240px"   class="layui-input"  lay-verify="required" required>
+                    <input type="text"  id="score" style="width: 240px"   class="layui-input"  lay-verify="required|number" required>
                 </div>
             </div>
             <div class="layui-form-item" STYLE="padding: 20px">
@@ -288,7 +281,7 @@
 
         //刷新表格
         $('#queryBtn').click(function () {
-            $('#userTable').bootstrapTable('refresh', {url: '/business/project/appraiseStudent/list'});//url为后台action
+            $('#userTable').bootstrapTable('refresh', {url: '/business/project/studentScore/list'});//url为后台action
         })
 
         function addInfo(id,studentId,teacherId,projectSelectId) {
@@ -297,7 +290,7 @@
                 title:"编辑",
                 closeBtn: false,
                 shift: 2,
-                area: ['500px', '500px'],
+                area: ['500px', '300px'],
                 shadeClose: true,
                 content: $("#add-edit"),
                 success: function(layero, index){
@@ -316,7 +309,7 @@
                 title:"编辑",
                 closeBtn: false,
                 shift: 2,
-                area: ['500px', '500px'],
+                area: ['500px', '300px'],
                 shadeClose: true,
                 content: $("#add-edit"),
                 success: function(layero, index){
@@ -395,7 +388,7 @@
 
         //关闭页面
         function CloseWin(){
-            $('#userTable').bootstrapTable('refresh', {url: '/business/project/appraiseStudent/list'});//url为后台action
+            $('#userTable').bootstrapTable('refresh', {url: '/business/project/studentScore/list'});//url为后台action
             layer.closeAll();
         }
 

@@ -60,7 +60,7 @@
 
         <!-- End Panel Other -->
     </div>
-    <div id="add-edit" style="display: none;">
+    <div id="add-edit" style="display: none;padding: 10px 20px 0px 20px">
         <form class="layui-form"  action="">
             <input type="hidden"  id="id" style="width: 240px"   class="layui-input">
             <div class="layui-form-item" style="margin-top: 20px">
@@ -219,10 +219,7 @@
                     showToggle: false,
                     minimumCountColumns: 2,       //最少允许的列数
                     uniqueId: "id",           //每一行的唯一标识，一般为主键列
-                    columns: [{
-                        checkbox: true,
-                        visible: true
-                    }, {
+                    columns: [ {
                         field: 'xuhao',
                         title: '序号',
                         align: 'center',
@@ -296,6 +293,10 @@
                             }
                         }],
                     responseHandler: function (res) { //后台返回的结果
+                        if(res.code=="10000011"){
+                            layer.msg(res.msg);
+                            parent.location.href ="http://localhost:8080/login";
+                        }
                         if(res.code == "200"){
                             var userInfo = res.data;
                             var NewData = [];
@@ -382,10 +383,10 @@
         function addInfo() {
             layer.open({
                 type: 1,
-                title:"编辑",
+                title:"添加项目信息",
                 closeBtn: false,
                 shift: 2,
-                area: ['500px', '500px'],
+                area: ['500px', '600px'],
                 shadeClose: true,
                 content: $("#add-edit"),
                 success: function(layero, index){
@@ -401,10 +402,10 @@
         function edit(id,projectKey,projectName,selectNumMax,collegeList,trainbaseId,teacherId,projectStart,projectEnd) {
             layer.open({
                 type: 1,
-                title:"编辑",
+                title:"编辑项目信息",
                 closeBtn: false,
                 shift: 2,
-                area: ['500px', '500px'],
+                area: ['500px', '600px'],
                 shadeClose: true,
                 content: $("#add-edit"),
                 success: function(layero, index){

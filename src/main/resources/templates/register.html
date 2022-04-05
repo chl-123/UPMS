@@ -6,105 +6,219 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <title>登录页面</title>
-    <link rel="stylesheet" th:href="@{/less/icons/font-awesome/css/font-awesome.min.css}">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link th:href="@{/css/font-awesome.css}" rel="stylesheet">
+    <link th:href="@{/css/animate.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">
+    <style type="text/css">
+        .container {
+            width: 500px;
+            height: 620px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            margin: auto;
+            padding: 5px;
+            z-index: 130;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 3px 18px rgba(100, 0, 0, .5);
+            font-size: 16px;
+        }
 
+
+        .layui-input {
+            border-radius: 5px;
+            width: 300px;
+            height: 40px;
+            font-size: 15px;
+        }
+
+
+
+    </style>
 </head>
 <body>
-<div class="tpl-wrap">
-    <div class="tpl-user-modal-wrapper">
-        <div class="tpl-modal">
-            
-            <div class="tpl-modal-item">
-                <div class="left-form-item">
-                    <form action="" autocomplete="off">
-                        <p class="sub-title">layAdmin管理系统-注册通行证</p>
-                        <div class="group">
-                            <label><i class="fa fa-user-o"></i></label>
-                            <input type="text" name="userAccount" class="inp" placeholder="请输入用户名">
-                        </div>
-                        <div class="group">
-                            <label><i class="fa fa-unlock-alt"></i></label>
-                            <input type="password" name="password" class="inp" placeholder="请输入密码">
-                        </div>
-                        <div class="group">
-                            <label><i class="fa fa-lock"></i></label>
-                            <input type="password" name="userName" class="inp" placeholder="请重新输入密码">
-                        </div>
-                        <div class="group">
-                            <label><i class="fa fa-envelope-o"></i></label>
-                            <input type="text" name="学院" class="inp" placeholder="请输入邮箱地址">
-                        </div>
-                        <div class="group">
-                            <label><i class="fa fa-envelope-o"></i></label>
-                            <input type="text" name="email" class="inp" placeholder="请输入邮箱地址">
-                        </div>
-                        <div class="group">
-                            <label><i class="fa fa-envelope-o"></i></label>
-                            <input type="text" name="email" class="inp" placeholder="请输入邮箱地址">
-                        </div>
-                        <div class="group">
-                            <button class="submit">立即注册</button>
-                        </div>
-                    </form>
-                </div>
-                <div class="right-bg-item">
-                    <img th:src="@{/images/right-bg.png}">
-                </div>
+<div class="container" id="register">
+    <form class="layui-form"  STYLE="padding: 20px 20px 0px 30px">
+        <div class="layui-form-item center" >
+            <label class="layui-form-label" style="width: 100px" >姓名：</label>
+            <div class="layui-input-block">
+                <input type="text"  id="userName" style="width: 240px"   class="layui-input"  lay-verify="required" required>
             </div>
         </div>
-    </div>
+        <div class="layui-form-item center" >
+            <label class="layui-form-label" style="width: 100px" >学号：</label>
+            <div class="layui-input-block">
+                <input type="text"  id="userAccount" style="width: 240px"   class="layui-input"  lay-verify="required" required>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 100px">角色：</label>
+            <div class="layui-input-block">
+                <input type="radio" name="roleKey" value="teacher" title="老师">
+                <input type="radio" name="roleKey" value="student" title="学生" checked>
+            </div>
+        </div>
+
+        <div class="layui-form-item center" >
+            <label class="layui-form-label" style="width: 100px" >密码：</label>
+            <div class="layui-input-block">
+                <input type="password"  id="userPassword" style="width: 240px"   class="layui-input"  lay-verify="required" required>
+            </div>
+        </div>
+        <div class="layui-form-item center" >
+            <label class="layui-form-label" style="width: 100px" >邮箱：</label>
+            <div class="layui-input-block">
+                <input type="text"  id="userEmail" style="width: 240px"   class="layui-input"  lay-verify="required" required>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 100px">性别：</label>
+            <div class="layui-input-block">
+                <input type="radio" name="userSex" value="0" title="男">
+                <input type="radio" name="userSex" value="1" title="女" checked>
+            </div>
+        </div>
+        <div class="layui-form-item center" >
+            <label class="layui-form-label" style="width: 100px" >手机号：</label>
+            <div class="layui-input-block">
+                <input type="text"  id="userPhone" style="width: 240px"   class="layui-input"  lay-verify="required" required>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 120px;margin-left: -20px">校内(校外)：</label>
+            <div class="layui-input-block">
+                <input type="radio" id="isInside" name="isInside" value="0" title="校内" checked>
+                <input type="radio" id="isInside" name="isInside" value="1" title="校外" >
+            </div>
+        </div>
+        <div class="layui-form-item" >
+            <label class="layui-form-label" style="width: 100px">学院：</label>
+            <div class="layui-input-block" id="collegeId" style="width: 240px">
+
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" STYLE="width: 100px" lay-submit lay-filter="save" id="submitBtn">注册</button>
+            </div>
+        </div>
+    </form>
 </div>
+<!-- 全局js -->
 <script th:src="@{/js/jquery.min.js}"></script>
-<script th:src="@{/js/layer.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+
+<!-- 自定义js -->
+<script th:src="@{/js/content.js}"></script>
+<script th:src="@{/js/common.js}"></script>
+
+<!-- Bootstrap table -->
+
+<script th:src="@{/layer/layer.js}"></script>
+<script th:src="@{/layui/layui.js}"></script>
+<script th:src="@{/js/xm-select.js}"></script>
 <script>
-    $("form").submit(function(e){
-        e.preventDefault();
-        let username = $("input[name='username']").val();
-        let pass = $("input[name='password']").val();
-        let pass1 = $("input[name='password1']").val();
-        let email = $("input[name='email']").val();
-        let code = $("input[name='code']").val();
-        let regmail = /(^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$)|(^$)/;
-        if (username == '') {
-            layer.msg('用户名不能为空');
-        } else if (pass == '') {
-            layer.msg('密码不能为空');
-        } else if (pass1 == '') {
-            layer.msg('重复密码不能为空');
-        } else if (pass != pass1) {
-            layer.msg('两次输入的密码不一致');
-        } else if (email == '') {
-            layer.msg('邮箱不能为空');
-        } else if (!regmail.test(email)) {
-            layer.msg('邮箱格式错误');
-        } else if (code == '') {
-            layer.msg('验证码不能为空');
-        } else {
-            layer.load(1);
-            $.ajax({
-                url: "{:url('register')}",
-                type: 'post',
-                dataType:"json",
-                data: {
-                    username: username,
-                    password: pass,
-                    password1: pass1,
-                    email: email,
-                    code: code
-                },
-                success: function (d) {
-                    layer.closeAll('loading');
-                    layer.msg(d.msg);
-                },
-                error: function () {
-                    layer.msg('网络错误');
-                    layer.closeAll('loading')
-                }
-            })
-        }
-        return false;
+    var xm=xmSelect.render({
+        el: '#collegeId',
+        language: 'zn',
+        radio: true,
+        clickClose: true,
+        model: {
+            icon: 'hidden',
+            label: {
+                type: 'text'
+            }
+        },
+        data: []
     });
+    $.ajax({
+        "url":"http://localhost:8080/basicData/college/list",
+        "type":"get",
+        "dataType":"json",
+        "success":function (response) {
+            var result=response.code;
+            var list=response.data;
+            if(result==200){
+                xm.update({
+                    data: list
+                })
+
+            }
+            else {
+                layer.msg(response.msg);
+            }
+        },
+        "error":function (response) {
+            layer.msg(response.code+" "+response.msg);
+        }
+    })
+    layui.use(['layer', 'form'], function () {
+        var layer = layui.layer,
+            $ = layui.jquery,
+            form = layui.form;
+        form.on('submit(save)', function () {
+            let regmail = /(^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$)|(^$)/;
+            var userAccount= $("#register").find('#userAccount').val()
+            var userName=  $("#register").find('#userName').val()
+            var userPassword=  $("#register").find('#userPassword').val()
+            var userEmail=$("#register").find('#userEmail').val()
+
+            var isInside = $('input[name="isInside"]:checked ').val();
+            var userSex = $('input[name="userSex"]:checked ').val();
+            var roleKey = $('input[name="roleKey"]:checked ').val();
+            var userPhone=$("#register").find('#userPhone').val();
+            var userStatus='1'
+            var xmList = xmSelect.get('#collegeId',true);
+            var collegeId=xmList.getValue('valueStr');
+            var user={
+                userPassword:userPassword,
+                userAccount:userAccount,
+                userName:userName,
+                userEmail:userEmail,
+                userSex:userSex,
+                userPhone:userPhone,
+                isInside:isInside,
+                collegeId:collegeId,
+                userStatus:userStatus,
+                roleKey:roleKey
+            }
+            var url="http://localhost:8080/doRegister";
+            submit(JSON.stringify(user),url);
+
+            return false;
+        })
+
+    })
+    //提交
+    function submit(dateInfo,url){
+        $.ajax({
+            "url":url,
+            "type":"post",
+            "data":dateInfo,
+            "dataType":"json",
+            "contentType":"application/json;charset=UTF-8",
+            "success":function (response) {
+                var result=response.code;
+                if(result==200){
+                    window.location.href ="http://localhost:8080/login";
+                    layer.msg(response.msg);
+                }
+                else {
+                    layer.msg(response.msg);
+                }
+            },
+            "error":function (response) {
+                layer.msg(response.code+" "+response.msg);
+            }
+        })
+    };
+
 
 </script>
 </body>

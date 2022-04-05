@@ -4,8 +4,10 @@ package com.dlu.upms.business.controller;
 import com.dlu.upms.business.dto.Charts;
 import com.dlu.upms.business.dto.CreateProjectSelect;
 import com.dlu.upms.business.dto.UpdateProjectSelect;
+import com.dlu.upms.business.entity.ProjectSelect;
 import com.dlu.upms.business.service.IProjectSelectService;
 import com.dlu.upms.common.base.BusinessException;
+import com.dlu.upms.common.base.NoLoginException;
 import com.dlu.upms.common.base.ResponseConstant;
 import com.dlu.upms.common.base.Result;
 import com.dlu.upms.common.consts.SystemConst;
@@ -73,9 +75,28 @@ public class ProjectSelectController {
         }
     }
     @GetMapping("/selectCount")
-    public Result<List<Charts>> selectCount() {
+    public Result<List<Charts>> selectCount(HttpSession session) {
+        UserInfo userInfo=(UserInfo) session.getAttribute(SystemConst.SYSTEM_USER_SESSION);
+        if(userInfo==null){
+            throw new NoLoginException("你还未登录请先登录");
+        }
+        ProjectSelect projectSelect=new ProjectSelect();
+        if("teacher".equals(userInfo.getRoleKey())){
+            projectSelect.setTeacherId(userInfo.getId());
+        }
+        List<Charts> result=iProjectSelectService.selectCount(projectSelect);
+        return new Result<List<Charts>>().success().put(result);
+    }
+    @GetMapping("/selectScore")
+    public Result<List<Charts>> selectScore(ProjectSelect projectSelect) {
 
-        List<Charts> result=iProjectSelectService.selectCount();
+        List<Charts> result=iProjectSelectService.selectScore(projectSelect);
+        return new Result<List<Charts>>().success().put(result);
+    }
+    @GetMapping("/selectScoreCount")
+    public Result<List<Charts>> selectScoreCount(ProjectSelect projectSelect) {
+
+        List<Charts> result=iProjectSelectService.selectScoreCount(projectSelect);
         return new Result<List<Charts>>().success().put(result);
     }
 

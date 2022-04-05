@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="renderer" content="webkit">
 
-    <title> hAdmin- 主页</title>
 
     <meta name="keywords" content="">
     <meta name="description" content="">
@@ -15,10 +14,13 @@
     <meta http-equiv="refresh" content="0;ie.html" />
     <![endif]-->
 
-    <link rel="shortcut icon" href="favicon.ico"> <link href="css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
-    <link href="css/font-awesome.min.css?v=4.4.0" rel="stylesheet">
-    <link href="css/animate.css" rel="stylesheet">
-    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/font-awesome.css}" rel="stylesheet">
+    <link th:href="@{/css/plugins/bootstrap-table/bootstrap-table.min.css}" rel="stylesheet">
+    <link th:href="@{/css/animate.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">
 </head>
 
 <body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
@@ -35,7 +37,7 @@
                                 <span class="clear">
                                     <span class="block m-t-xs" style="font-size:20px;">
                                         <i class="fa fa-area-chart"></i>
-                                        <strong class="font-bold">hAdmin</strong>
+                                        <strong class="font-bold">实训管理系统</strong>
                                     </span>
                                 </span>
                             </a>
@@ -100,7 +102,7 @@
                     <li>
                         <a href="#"><i class="fa fa-flask"></i> <span class="nav-label">实训成绩管理</span><span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <li><a class="J_menuItem active" href="http://localhost:8080/system/role">学生成绩统计表</a>
+                            <li><a class="J_menuItem active" href="http://localhost:8080/basicInfo/score">学生成绩统计表</a>
                             </li>
                         </ul>
                     </li>
@@ -111,7 +113,7 @@
         </nav>
         <!--左侧导航结束-->
         <!--右侧部分开始-->
-        <div id="page-wrapper" class="gray-bg dashbard-1">
+        <div id="page-wrapper" class="gray-bg dashbard-1" >
             <div class="row border-bottom">
                 <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
                     <div class="navbar-header"><a class="navbar-minimalize minimalize-styl-2 btn btn-info " href="#"><i class="fa fa-bars"></i> </a>
@@ -123,61 +125,220 @@
                     </div>
                     <ul class="nav navbar-top-links navbar-right">
                         <li class="dropdown">
-                            <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
-                                <i class="fa fa-bell"></i> <span class="label label-primary">8</span>
+
+                            <a class="dropdown-toggle count-info" data-toggle="dropdown"
+                            >
+                                <i class="fa fa-user">[[${session.systemUserSession.userName}]]</i>
                             </a>
-                            <ul class="dropdown-menu dropdown-alerts">
-                                <li>
-                                    <a href="mailbox.html">
-                                        <div>
-                                            <i class="fa fa-envelope fa-fw"></i> 您有16条未读消息
-                                            <span class="pull-right text-muted small">4分钟前</span>
-                                        </div>
-                                    </a>
+                            <ul class="dropdown-menu dropdown-alerts" style="width: 100px">
+                                <li><a  th:onclick="editInfo()" >修改信息</a></li>
                                 </li>
                                 <li class="divider"></li>
-                                <li>
-                                    <a href="profile.html">
-                                        <div>
-                                            <i class="fa fa-qq fa-fw"></i> 3条新回复
-                                            <span class="pull-right text-muted small">12分钟钱</span>
-                                        </div>
-                                    </a>
+                                <li><a  th:onclick="editPassword()" >修改密码</a></li>
                                 </li>
-                                <li class="divider"></li>
-                                <li>
-                                    <div class="text-center link-block">
-                                        <a class="J_menuItem" href="notifications.html">
-                                            <strong>查看所有 </strong>
-                                            <i class="fa fa-angle-right"></i>
-                                        </a>
-                                    </div>
-                                </li>
+
                             </ul>
+
                         </li>
                     </ul>
                 </nav>
             </div>
             <div class="row J_mainContent" id="content-main">
-                <iframe id="J_iframe" width="100%" height="100%" src="index_v1.html?v=4.0" frameborder="0" data-id="index_v1.html" seamless></iframe>
+                <iframe id="J_iframe" width="100%" height="100%"  frameborder="0"  seamless></iframe>
             </div>
         </div>
         <!--右侧部分结束-->
     </div>
+    <div id="add-edit" style="display: none;padding: 20px 20px 0px 20px">
+        <form class="layui-form"  >
+            <input type="hidden"  id="id" style="width: 240px"   class="layui-input">
+            <div class="layui-form-item center" >
+                <label class="layui-form-label" style="width: 100px" >账号：</label>
+                <div class="layui-input-block">
+                    <input type="text"  id="userAccount" style="width: 240px"   class="layui-input"  lay-verify="required" required >
+                </div>
+            </div>
+            <div class="layui-form-item center" >
+                <label class="layui-form-label" style="width: 100px" >姓名：</label>
+                <div class="layui-input-block">
+                    <input type="text"  id="userName" style="width: 240px"   class="layui-input"  lay-verify="required" required >
+                </div>
+            </div>
 
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="save" id="submitBtn">修改</button>
+                    <button  class="layui-btn layui-btn-primary" id="closeBtn" >取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="changePassword" style="display: none;padding: 20px 20px 0px 20px">
+        <form class="layui-form"  >
+            <input type="hidden"  id="id" style="width: 240px"   class="layui-input" th:value="${session.systemUserSession.id}">
+            <input type="hidden"  id="userAccount" style="width: 240px"   class="layui-input" th:value="${session.systemUserSession.userAccount}">
+            <div class="layui-form-item center" >
+                <label class="layui-form-label" style="width: 100px" >新密码：</label>
+                <div class="layui-input-block">
+                    <input type="text"  id="userPassword" style="width: 240px"   class="layui-input"  lay-verify="required" required >
+                </div>
+            </div>
+            <div class="layui-form-item center" >
+                <label class="layui-form-label" style="width: 100px" >再次输入：</label>
+                <div class="layui-input-block">
+                    <input type="text"  id="userPassword1" style="width: 240px"   class="layui-input"  lay-verify="pass"  required >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="change" >修改</button>
+                    <button  class="layui-btn layui-btn-primary" id="closeBtn" >取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
     <!-- 全局js -->
-    <script src="js/jquery.min.js?v=2.1.4"></script>
-    <script src="js/bootstrap.min.js?v=3.3.6"></script>
-    <script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
-    <script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
-    <script src="js/plugins/layer/layer.min.js"></script>
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/plugins/metisMenu/jquery.metisMenu.js}"></script>
+    <script th:src="@{/js/plugins/slimscroll/jquery.slimscroll.min.js}"></script>
+    <script th:src="@{/js/plugins/layer/layer.min.js}"></script>
 
-    <!-- 自定义js -->
-    <script src="js/hAdmin.js?v=4.1.0"></script>
-    <script type="text/javascript" src="js/index.js"></script>
+    <script th:src="@{/js/hAdmin.js}"></script>
+    <script type="text/javascript" th:src="@{/js/index.js}"></script>
 
     <!-- 第三方插件 -->
-    <script src="js/plugins/pace/pace.min.js"></script>
+    <script th:src="@{/js/plugins/pace/pace.min.js}"></script>
+    <!-- 自定义js -->
+    <script th:src="@{/js/content.js}"></script>
+    <script th:src="@{/js/common.js}"></script>
+
+    <!-- Bootstrap table -->
+    <script th:src="@{/js/plugins/bootstrap-table/bootstrap-table.min.js}"></script>
+    <script th:src="@{/js/plugins/bootstrap-table/bootstrap-table-mobile.min.js}"></script>
+    <script th:src="@{/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js}"></script>
+    <script th:src="@{/layer/layer.js}"></script>
+    <script th:src="@{/layui/layui.js}"></script>
+    <script th:src="@{/js/xm-select.js}"></script>
+    <script th:inline="javascript">
+        function editPassword() {
+            layer.open({
+                type: 1,
+                title:"编辑学生信息",
+                closeBtn: false,
+                shift: 2,
+                area: ['450px', '300px'],
+                shadeClose: true,
+                content: $("#changePassword")
+            });
+
+        }
+        function editInfo() {
+            var id = [[${session.systemUserSession.id}]]
+            var userName = [[${session.systemUserSession.userName}]]
+            var userAccount = [[${session.systemUserSession.userAccount}]]
+
+            layer.open({
+                type: 1,
+                title:"编辑学生信息",
+                closeBtn: false,
+                shift: 2,
+                area: ['450px', '600px'],
+                shadeClose: true,
+                content: $("#add-edit"),
+                success: function(layero, index){
+                    $("#add-edit").val('1')
+                    $("#add-edit").find('#id').val(id)
+                    $("#add-edit").find('#userAccount').val(userAccount)
+                    $("#add-edit").find('#userName').val(userName)
+
+                },
+                yes:function(){
+                }
+            });
+        }
+        layui.use(['layer', 'form'], function () {
+            var layer = layui.layer,
+                $ = layui.jquery,
+                form = layui.form;
+            form.verify({
+
+                pass: function(value) {
+                    if ($("#changePassword").find('#userPassword').val() !== value)
+                        return '两次密码输入不一致！';
+                }
+            });
+            form.on('submit(save)', function () {
+                var id  = $("#add-edit").find('#id').val()
+                var userAccount= $("#add-edit").find('#userAccount').val()
+                var userName=  $("#add-edit").find('#userName').val()
+
+                var user={
+                    id:id,
+                    userAccount:userAccount,
+                    userName:userName
+                }
+                var url="http://localhost:8080/system/user/update";
+                submit(JSON.stringify(user),url);
+
+                return false;
+            })
+            form.on('submit(change)', function () {
+                var id  = $("#changePassword").find('#id').val()
+                var userAccount= $("#changePassword").find('#userAccount').val()
+                var userPassword=  $("#changePassword").find('#userPassword').val()
+
+                var user={
+                    id:id,
+                    userAccount:userAccount,
+                    userPassword:userPassword
+                }
+                var url="http://localhost:8080/system/user/changePwd";
+                submit(JSON.stringify(user),url);
+
+                return false;
+            })
+            var obj = document.getElementById('closeBtn');
+            obj.addEventListener('click', function cancel(){
+                CloseWin();
+            });
+        })
+        //提交
+        function submit(dateInfo,url){
+            $.ajax({
+                "url":url,
+                "type":"post",
+                "data":dateInfo,
+                "dataType":"json",
+                "contentType":"application/json;charset=UTF-8",
+                "success":function (response) {
+                    var result=response.code;
+                    if(result==200){
+
+                        CloseWin()
+                        layer.msg(response.msg);
+                    }
+                    else {
+                        CloseWin()
+                        layer.msg(response.msg);
+                    }
+                },
+                "error":function (response) {
+                    layer.msg(response.code+" "+response.msg);
+                }
+            })
+        };
+
+
+        //关闭页面
+        function CloseWin(){
+
+            layer.closeAll();
+            parent.location.href="http://localhost:8080/admin"
+        }
+
+
+    </script>
 
 </body>
 

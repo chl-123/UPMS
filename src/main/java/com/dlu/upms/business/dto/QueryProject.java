@@ -48,5 +48,8 @@ public class QueryProject {
 
     private String flag;
 
+    private String userName;
+    private String userAccount;
+
 
 }

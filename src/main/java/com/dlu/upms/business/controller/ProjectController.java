@@ -1,11 +1,11 @@
 package com.dlu.upms.business.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.dlu.upms.business.dto.CreateProject;
-import com.dlu.upms.business.dto.ProjectInfo;
-import com.dlu.upms.business.dto.QueryProject;
-import com.dlu.upms.business.dto.UpdateProject;
+import com.dlu.upms.basicData.dto.xmSelect;
+import com.dlu.upms.business.dto.*;
+import com.dlu.upms.business.entity.Project;
 import com.dlu.upms.business.service.IProjectService;
 import com.dlu.upms.common.base.BusinessException;
 import com.dlu.upms.common.base.NoLoginException;
@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -45,6 +47,28 @@ public class ProjectController {
         Page<ProjectInfo> pageInfo = iProjectService.selectProjectList(page, project);
         PageResult<ProjectInfo> pageResult = new PageResult<ProjectInfo>(pageInfo.getTotal(), pageInfo.getRecords());
         return pageResult;
+    }
+    @GetMapping("/projectList")
+    public Result<List<xmSelect>> list(QueryProject project, HttpSession session) {
+        UserInfo userInfo=(UserInfo) session.getAttribute(SystemConst.SYSTEM_USER_SESSION);
+        if(userInfo==null){
+            throw new NoLoginException("你还未登录请先登录");
+        }
+        QueryWrapper<Project> queryWrapper=new QueryWrapper<>();
+        if("teacher".equals(userInfo.getRoleKey())){
+            queryWrapper.eq("teacher_id",userInfo.getId());
+        }
+        List<Project> list = iProjectService.list(queryWrapper);
+        List<xmSelect> dropdownList=new ArrayList<>();
+        if(list.size()!=0){
+            for(Project project1:list){
+                xmSelect projectDropdown=new xmSelect();
+                projectDropdown.setValue(project1.getId());
+                projectDropdown.setName(project1.getProjectName());
+                dropdownList.add(projectDropdown);
+            }
+        }
+        return new Result<List<xmSelect>>().success().put(dropdownList);
     }
 
     @GetMapping("/appraiseTeacher/list")

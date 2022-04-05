@@ -42,10 +42,10 @@ public class ProjectExpenseController {
     public Result<?> delete(@PathVariable("id")String id) {
         boolean result=iProjectExpenseService.deleteProjectExpenseInfo(id);
         if (result) {
-            return new Result<>().success("退选成功");
+            return new Result<>().success("删除成功");
 
         }else {
-            return new Result<>().error("退选失败，请重试");
+            return new Result<>().error("删除失败，请重试");
         }
     }
     @PostMapping("/create")
@@ -57,10 +57,10 @@ public class ProjectExpenseController {
         }
         boolean result=iProjectExpenseService.createProjectExpenseInfo(projectExpense);
         if (result) {
-            return new Result<>().success("选择成功");
+            return new Result<>().success("添加成功");
 
         }else {
-            return new Result<>().error("选择失败，请重试");
+            return new Result<>().error("添加失败，请重试");
         }
     }
     @PostMapping("/update")
@@ -68,10 +68,10 @@ public class ProjectExpenseController {
 
         boolean result=iProjectExpenseService.updateProjectExpenseInfo(projectExpense);
         if (result) {
-            return new Result<>().success("选择成功");
+            return new Result<>().success("修改成功");
 
         }else {
-            return new Result<>().error("选择失败，请重试");
+            return new Result<>().error("修改失败，请重试");
         }
     }
 }

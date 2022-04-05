@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dlu.upms.basicData.entity.College;
 import com.dlu.upms.basicData.service.ICollegeService;
 import com.dlu.upms.common.base.BusinessException;
+import com.dlu.upms.common.consts.SystemConst;
 import com.dlu.upms.common.excel.ExcelUtil;
 import com.dlu.upms.common.util.Utils;
 import com.dlu.upms.system.dto.*;
@@ -23,11 +24,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author chl
@@ -43,11 +49,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private IRoleService iRoleService;
     @Autowired
     private ICollegeService iCollegeService;
+
     @Override
     public Page<UserInfo> selectUserList(Page<UserInfo> page, QueryUser user) {
         Page<UserInfo> userInfoPage = userMapper.selectUserList(page, user);
-        return  userInfoPage;
+        return userInfoPage;
     }
+
     @Override
     public List<UserInfo> selectList(QueryUser user) {
         return userMapper.selectUserList(user);
@@ -56,107 +64,119 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public boolean deleteUserInfo(String id, String userRoleId) {
-        if(Utils.isEmpty(id)){
+        if (Utils.isEmpty(id)) {
             throw new BusinessException("id不能为为空");
         }
-        if(Utils.isEmpty(userRoleId)){
+        if (Utils.isEmpty(userRoleId)) {
             throw new BusinessException("用户角色不能为空");
         }
         boolean result = this.removeById(id);
-        if(!result){
+        if (!result) {
             throw new BusinessException("删除失败");
         }
         boolean result1 = iUserRoleService.removeById(userRoleId);
-        if(!result1){
+        if (!result1) {
             throw new BusinessException("删除失败");
         }
         return true;
     }
 
     @Override
-    public boolean updateUserInfo(UpdateUser user) {
-        if(Utils.isEmpty(user.getId())){
+    public boolean updateUserInfo(UpdateUser user,HttpSession session, HttpServletRequest request) {
+        if (Utils.isEmpty(user.getId())) {
             throw new BusinessException("Id不能为空");
         }
-        if("3".equals(user.getFlag())){
-            if(Utils.isEmpty(user.getUserRoleId())){
+        if ("3".equals(user.getFlag())) {
+            if (Utils.isEmpty(user.getUserRoleId())) {
                 throw new BusinessException("用户角色ID不能为空");
             }
         }
 
-        UserInfo userInfo=new UserInfo();
-        BeanUtils.copyProperties(user,userInfo);
+        UserInfo userInfo = new UserInfo();
+        BeanUtils.copyProperties(user, userInfo);
         this.checkInfo(userInfo);
-        if("3".equals(user.getFlag())){
-            UpdateWrapper<UserRole> userRoleUpdateWrapper=new UpdateWrapper<>();
-            userRoleUpdateWrapper.eq("id",user.getUserRoleId());
-            userRoleUpdateWrapper.set("role_id",user.getRoleId());
-            userRoleUpdateWrapper.set("update_time",new Date());
+
+
+        if ("3".equals(user.getFlag())) {
+            UpdateWrapper<UserRole> userRoleUpdateWrapper = new UpdateWrapper<>();
+            userRoleUpdateWrapper.eq("id", user.getUserRoleId());
+            userRoleUpdateWrapper.set("role_id", user.getRoleId());
+            userRoleUpdateWrapper.set("update_time", new Date());
             boolean result1 = iUserRoleService.update(userRoleUpdateWrapper);
-            if(!result1){
+            if (!result1) {
                 throw new BusinessException("更新失败");
             }
         }
 
-        UpdateWrapper<User> userUpdateWrapper=new UpdateWrapper<>();
-        userUpdateWrapper.eq("id",user.getId());
-        User user1=new User();
-        BeanUtils.copyProperties(user,user1);
+        UpdateWrapper<User> userUpdateWrapper = new UpdateWrapper<>();
+        userUpdateWrapper.eq("id", user.getId());
+        User user1 = new User();
+        BeanUtils.copyProperties(user, user1);
         String password = new SimpleHash("md5", "123456789", user1.getUserAccount(), 6).toHex();
         user1.setUserPassword(password);
         boolean result2 = this.update(user1, userUpdateWrapper);
-        return result2;
+        if (!result2) {
+            throw new BusinessException("更新失败");
+        }
+        UserInfo userInfo1=(UserInfo) session.getAttribute(SystemConst.SYSTEM_USER_SESSION);
+        userInfo.setRoleKey(userInfo1.getRoleKey());
+        if(userInfo1.getId().equals(userInfo.getId())){
+            BeanUtils.copyProperties(userInfo,userInfo1);
+            request.getSession().setAttribute(SystemConst.SYSTEM_USER_SESSION, userInfo1);
+        }
+
+        return true;
 
     }
 
     @Override
     public boolean createUserInfo(CreateUser user) {
-        UserInfo userInfo=new UserInfo();
-        BeanUtils.copyProperties(user,userInfo);
+        UserInfo userInfo = new UserInfo();
+        BeanUtils.copyProperties(user, userInfo);
         this.checkInfo(userInfo);
-        User user1=new User();
-        BeanUtils.copyProperties(user,user1);
+        User user1 = new User();
+        BeanUtils.copyProperties(user, user1);
         user1.setUserPassword("123456789");
         String password = new SimpleHash("md5", user1.getUserPassword(), user1.getUserAccount(), 6).toHex();
         user1.setUserPassword(password);
         user1.setUpdateTime(new Date());
         boolean result = this.save(user1);
-        if(!result){
-            throw new BusinessException("保存成功");
+        if (!result) {
+            throw new BusinessException("保存失败");
         }
-        QueryWrapper<User> queryWrapper=new QueryWrapper<>();
-        queryWrapper.eq("user_account",user.getUserAccount());
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_account", user.getUserAccount());
         List<User> list = this.list(queryWrapper);
-        if(list.size()!=0){
-            UserRole userRole =new UserRole();
+        if (list.size() != 0) {
+            UserRole userRole = new UserRole();
             userRole.setUserId(list.get(0).getId());
             userRole.setUpdateTime(new Date());
-            QueryWrapper<Role> roleQueryWrapper =new QueryWrapper<>();
-            if("3".equals(user.getFlag())){
+            QueryWrapper<Role> roleQueryWrapper = new QueryWrapper<>();
+            if ("3".equals(user.getFlag())) {
                 userRole.setRoleId(user.getRoleId());
-            }else  if("1".equals(user.getFlag())){
+            } else if ("1".equals(user.getFlag())) {
 
-                roleQueryWrapper.eq("role_key","student");
+                roleQueryWrapper.eq("role_key", "student");
                 List<Role> list1 = iRoleService.list(roleQueryWrapper);
-                if(list1.size()==0){
+                if (list1.size() == 0) {
                     throw new BusinessException("保存失败");
                 }
                 userRole.setRoleId(list1.get(0).getId());
 
-            }else  if("2".equals(user.getFlag())){
-                roleQueryWrapper.eq("role_key","teacher");
+            } else if ("2".equals(user.getFlag())) {
+                roleQueryWrapper.eq("role_key", "teacher");
                 List<Role> list1 = iRoleService.list(roleQueryWrapper);
-                if(list1.size()==0){
+                if (list1.size() == 0) {
                     throw new BusinessException("保存失败");
                 }
                 userRole.setRoleId(list1.get(0).getId());
             }
             boolean result1 = iUserRoleService.save(userRole);
-            if(!result1){
+            if (!result1) {
                 throw new BusinessException("保存失败");
             }
 
-        }else {
+        } else {
             throw new BusinessException("保存失败");
         }
 
@@ -165,43 +185,44 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
 
-    private void checkInfo(UserInfo user){
-        if(Utils.isEmpty(user.getUserAccount())){
+    private void checkInfo(UserInfo user) {
+        if (Utils.isEmpty(user.getUserAccount())) {
             throw new BusinessException("账号不能为空");
         }
-        if(Utils.isEmpty(user.getUserName())){
+        if (Utils.isEmpty(user.getUserName())) {
             throw new BusinessException("用户名不能为空");
         }
 
-        if("1".equals(user.getFlag())){
-            if(Utils.isEmpty(user.getUserSex())){
+        if ("1".equals(user.getFlag())||"2".equals(user.getFlag())) {
+            if (Utils.isEmpty(user.getUserSex())) {
                 throw new BusinessException("性别不能为空");
             }
-            if(Utils.isEmpty(user.getUserEmail())){
+            if (Utils.isEmpty(user.getUserEmail())) {
                 throw new BusinessException("邮箱不能为空");
             }
-            if(Utils.isEmpty(user.getUserPhone())){
+            if (Utils.isEmpty(user.getUserPhone())) {
                 throw new BusinessException("手机号不能为空");
             }
-            if(Utils.isEmpty(user.getCollegeId())){
+            if (Utils.isEmpty(user.getCollegeId())) {
                 throw new BusinessException("学院ID不能为空");
             }
-            if(Utils.isEmpty(user.getIsInside())){
+            if (Utils.isEmpty(user.getIsInside())) {
                 throw new BusinessException("是否校内不能为空");
             }
-        }else if("3".equals(user.getFlag())){
-            if(
+        } else if ("3".equals(user.getFlag())) {
+            if (
                     Utils.isEmpty(user.getRoleId())
             ) {
                 throw new BusinessException("角色ID不能为空");
             }
-            if(
+            if (
                     Utils.isEmpty(user.getUserStatus())
             ) {
                 throw new BusinessException("用户状态不能为空");
             }
         }
     }
+
     public User queryUserByAccount(String userAccount) {
         QueryWrapper<User> ew = new QueryWrapper<>();
         ew.and(e -> e.eq("user_account", userAccount));
@@ -210,21 +231,83 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public boolean batchCreateUser(String flag, MultipartFile file) throws Exception {
-        if(Utils.isEmpty(flag)){
+        if (Utils.isEmpty(flag)) {
             throw new BusinessException("标记不能为空");
         }
-        String sheetName="";
+        String sheetName = "";
         if ("1".equals(flag)) {
-            sheetName="学生信息";
-            this.batch(file,sheetName,"student");
+            sheetName = "学生信息";
+            this.batch(file, sheetName, "student");
 
-        }else if("2".equals(flag)){
-            sheetName="教师信息";
-            this.batch(file,sheetName,"teacher");
+        } else if ("2".equals(flag)) {
+            sheetName = "教师信息";
+            this.batch(file, sheetName, "teacher");
         }
         return true;
     }
-    private void batch(MultipartFile file,String sheetName,String roleKey) throws Exception {
+
+    @Override
+    public boolean register(CreateUser user) {
+        UserInfo userInfo = new UserInfo();
+        userInfo.setFlag("1");
+        BeanUtils.copyProperties(user, userInfo);
+        this.checkInfo(userInfo);
+        if (Utils.isEmpty(user.getRoleKey())) {
+            throw new BusinessException("角色标记不能为空");
+        }
+        User queryUser=this.queryUserByAccount(user.getUserAccount());
+        if (queryUser != null) {
+            throw new BusinessException("账号已存在");
+        }
+        User user1 = new User();
+        BeanUtils.copyProperties(user, user1);
+
+        String password = new SimpleHash("md5", user1.getUserPassword(), user1.getUserAccount(), 6).toHex();
+        user1.setUserPassword(password);
+        user1.setUpdateTime(new Date());
+        boolean result = this.save(user1);
+        if (!result) {
+            throw new BusinessException("保存失败");
+        }
+        User user2=this.queryUserByAccount(user.getUserAccount());
+        UserRole userRole = new UserRole();
+        userRole.setUserId(user2.getId());
+        userRole.setUpdateTime(new Date());
+        QueryWrapper<Role> roleQueryWrapper = new QueryWrapper<>();
+        roleQueryWrapper.eq("role_key", user.getRoleKey());
+        Role role= iRoleService.getOne(roleQueryWrapper);
+        userRole.setRoleId(role.getId());
+        boolean result1 = iUserRoleService.save(userRole);
+        if (!result1) {
+            throw new BusinessException("保存失败");
+        }
+
+
+        return true;
+    }
+
+    @Override
+    public boolean changePwd(UpdateUser user) {
+        if (Utils.isEmpty(user.getUserAccount())) {
+            throw new BusinessException("账号不能为空");
+        }
+        if (Utils.isEmpty(user.getId())) {
+            throw new BusinessException("id不能为空");
+        }
+        if (Utils.isEmpty(user.getUserPassword())) {
+            throw new BusinessException("密码不能为空");
+        }
+        String password = new SimpleHash("md5", user.getUserPassword(), user.getUserAccount(), 6).toHex();
+        User user1 = new User();
+        user1.setUserPassword(password);
+        user1.setUpdateTime(new Date());
+        UpdateWrapper<User> userUpdateWrapper = new UpdateWrapper<>();
+        userUpdateWrapper.eq("id", user.getId());
+        boolean result = this.update(user1,userUpdateWrapper);
+        return result;
+    }
+
+    private void batch(MultipartFile file, String sheetName, String roleKey) throws Exception {
 
         List<BatchCreateUser> dataList = ExcelUtil.read(file, BatchCreateUser.class, sheetName);
         if (dataList.size() == 0) {
@@ -250,21 +333,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             }
             if (Utils.isEmpty(userInfo.getIsInside())) {
                 throw new BusinessException("是否校内不能为空");
-            } else {
-                if (!"校内".equals(userInfo.getIsInside()) || !"校外".equals(userInfo.getIsInside())) {
+            } else if (!"校内".equals(userInfo.getIsInside())&&!"校外".equals(userInfo.getIsInside())){
                     throw new BusinessException("请填写【校内】或【校外】");
-                }
             }
-            QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
-            userQueryWrapper.eq("userAccount", userInfo.getUserAccount());
-            User queryUser = this.getOne(userQueryWrapper);
+            User queryUser = this.queryUserByAccount(userInfo.getUserAccount());
             if (queryUser != null) {
                 continue;
             }
             User user = new User();
             BeanUtils.copyProperties(userInfo, user);
             if (!Utils.isEmpty(userInfo.getUserSex())) {
-                if (!"男".equals(userInfo.getUserSex()) || !"女".equals(userInfo.getUserSex())) {
+                if (!"男".equals(userInfo.getUserSex())&&!"女".equals(userInfo.getUserSex())) {
                     throw new BusinessException("请填写【男】或【女】");
                 } else {
                     user.setUserSex(userSex.get(userInfo.getUserSex()));
@@ -287,10 +366,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             if (!result) {
                 throw new BusinessException("添加失败");
             }
-            QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("userAccount", userInfo.getUserAccount());
-            User user1 = this.getOne(userQueryWrapper);
-            UserRole userRole =new UserRole();
+            User user1 = this.queryUserByAccount(user.getUserAccount());
+            UserRole userRole = new UserRole();
             userRole.setUserId(user1.getId());
             userRole.setRoleId(role.getId());
             boolean result1 = iUserRoleService.save(userRole);

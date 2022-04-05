@@ -192,6 +192,10 @@
                             }
                         }],
                     responseHandler: function (res) { //后台返回的结果
+                        if(res.code=="10000011"){
+                            layer.msg(res.msg);
+                            parent.location.href ="http://localhost:8080/login";
+                        }
                         if(res.code == "200"){
                             var userInfo = res.data;
                             var NewData = [];

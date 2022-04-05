@@ -95,7 +95,7 @@ body{
     outline: none;
     box-sizing: border-box;
     padding-left: 12px;
-    width: 80%;
+    width: 60%;
     color: #555555;
 }
 .tpl-modal .tpl-modal-item .left-form-item .group .inp::-webkit-input-placeholder{

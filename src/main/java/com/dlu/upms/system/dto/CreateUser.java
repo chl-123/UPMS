@@ -29,7 +29,7 @@ public class CreateUser {
 
     private String roleName;
     private String roleId;
-
+    private String roleKey;
     private String isInside;
 
     private String collegeId;

@@ -186,6 +186,10 @@
                             }
                         }],
                     responseHandler: function (res) { //后台返回的结果
+                        if(res.code=="10000011"){
+                            layer.msg(res.msg);
+                            parent.location.href ="http://localhost:8080/login";
+                        }
                         if(res.code == "200"){
                             var userInfo = res.data;
                             var NewData = [];
@@ -261,7 +265,7 @@
             $('#userTable').bootstrapTable('refresh', {url: '/business/project/projectSelected/list'});//url为后台action
         })
         function remove(id,projectSelectId) {
-            layer.confirm('确定删除此条信息吗？', {
+            layer.confirm('确定退选此课程吗？', {
                 btn: ['确定','取消'] //按钮
 
             }, function(){
@@ -301,7 +305,7 @@
 
 
         function CloseWin(){
-            $('#userTable').bootstrapTable('refresh', {url: '/business/project/list'});//url为后台action
+            $('#userTable').bootstrapTable('refresh', {url: '/business/project/projectSelected/list'});//url为后台action
             layer.closeAll();
         }
 

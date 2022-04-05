@@ -44,7 +44,6 @@
                         </div>
                         <div class="form-group" style="padding-left: 20px">
                             <button class="btn btn-primary btn-sm" id="queryBtn">查询</button>
-                            <button class="btn btn-primary btn-sm" id="addBtn" onclick="addInfo()">新增</button>
                         </div>
 
                     </div>
@@ -180,6 +179,10 @@
 
                         }],
                     responseHandler: function (res) { //后台返回的结果
+                        if(res.code=="10000011"){
+                            layer.msg(res.msg);
+                            parent.location.href ="http://localhost:8080/login";
+                        }
                         if(res.code == "200"){
                             var userInfo = res.data;
                             var NewData = [];

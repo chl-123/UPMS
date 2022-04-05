@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
-    <title> - Bootstrap Table</title>
+    <title>用户管理</title>
     <meta name="keywords" content="">
     <meta name="description" content="">
 
@@ -67,7 +67,7 @@
 
         <!-- End Panel Other -->
     </div>
-    <div id="add-edit" style="display: none;">
+    <div id="add-edit" style="display: none;padding: 10px 20px 0px 20px">
         <form class="layui-form"  action="">
             <input type="hidden"  id="id" style="width: 240px"   class="layui-input">
             <input type="hidden"  id="roleKey" style="width: 240px"   class="layui-input">
@@ -104,7 +104,30 @@
             </div>
         </form>
     </div>
-
+    <div id="changePassword" style="display: none;padding: 20px 20px 0px 20px">
+        <form class="layui-form"  >
+            <input type="hidden"  id="id" style="width: 240px"   class="layui-input" th:value="${session.systemUserSession.id}">
+            <input type="hidden"  id="userAccount" style="width: 240px"   class="layui-input" th:value="${session.systemUserSession.userAccount}">
+            <div class="layui-form-item center" >
+                <label class="layui-form-label" style="width: 100px" >新密码：</label>
+                <div class="layui-input-block">
+                    <input type="text"  id="userPassword" style="width: 240px"   class="layui-input"  lay-verify="required" required >
+                </div>
+            </div>
+            <div class="layui-form-item center" >
+                <label class="layui-form-label" style="width: 100px" >再次输入：</label>
+                <div class="layui-input-block">
+                    <input type="text"  id="userPassword1" style="width: 240px"   class="layui-input"  lay-verify="pass"  required >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="change" >修改</button>
+                    <button  class="layui-btn layui-btn-primary" id="closeBtn" >取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
     <!-- 全局js -->
     <script th:src="@{/js/jquery.min.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
@@ -212,23 +235,26 @@
                         {
                             field: 'updateTime',
                             title: '更新时间',
-                            align: 'center'
-
+                            align: 'center',
+                            width: '250px'
                         },{
                             field: 'operation',
                             title: '操作',
                             align: 'center',
-                            width: '250px',
                             formatter: function(value, row, index) {
 
                                 var actions = [];
                                 actions.push('<a class="btn btn-success btn-xs " href="javascript:void(0)" onclick="edit(\'' + row.id+'\',\'' + row.userAccount+'\',\'' + row.userName+'\',\'' + row.userStatus+'\',\'' + row.roleId+'\',\'' + row.userRoleId+'\',\'' + row.roleKey+'\')"><i class="fa fa-edit"></i>编辑</a> ');
                                 actions.push('<a class="btn btn-danger btn-xs " href="javascript:void(0)" onclick="remove(\'' + row.id+'\',\'' + row.userRoleId+'\')"><i class="fa fa-remove"></i>删除</a> ');
-                                actions.push('<a class="btn btn-danger btn-xs " href="javascript:void(0)" onclick="rePassword(\'' + row.id+'\',\'' + row.userAccount+'\',\'' + row.userPassword+'\')"><i class="fa fa-remove"></i>删除</a> ');
+                                actions.push('<a class="btn btn-success btn-xs " href="javascript:void(0)" onclick="editPassword(\'' + row.id+'\',\'' + row.userAccount+'\',\'' + row.userPassword+'\')"><i class="fa fa-edit"></i>修改密码</a> ');
                                 return actions.join('');
                             }
                         }],
                     responseHandler: function (res) { //后台返回的结果
+                        if(res.code=="10000011"){
+                            layer.msg(res.msg);
+                            parent.location.href ="http://localhost:8080/login";
+                        }
                         if(res.code == "200"){
                             var userInfo = res.data;
                             var NewData = [];
@@ -324,6 +350,23 @@
                 },
             });
         }
+        function editPassword(id,userAccount) {
+            layer.open({
+                type: 1,
+                title:"编辑学生信息",
+                closeBtn: false,
+                shift: 2,
+                area: ['450px', '300px'],
+                shadeClose: true,
+                content: $("#changePassword"),
+                success: function(layero, index){
+                    $("#changePassword").find('#id').val(id)
+                    $("#changePassword").find('#userAccount').val(userAccount)
+
+               }
+
+        })
+        }
         function edit(id,userAccount,userName,userStatus,roleId,userRoleId,roleKey) {
             layer.open({
                 type: 1,
@@ -393,6 +436,21 @@
                 isLockVal == '0' ? $("#userStatus_check").next().prop("class", "layui-unselect layui-form-switch ")
                     : $("#status").next().prop("class", "layui-unselect layui-form-switch layui-form-onswitch");//修样式
             });
+            form.on('submit(change)', function () {
+                var id  = $("#changePassword").find('#id').val()
+                var userAccount= $("#changePassword").find('#userAccount').val()
+                var userPassword=  $("#changePassword").find('#userPassword').val()
+
+                var user={
+                    id:id,
+                    userAccount:userAccount,
+                    userPassword:userPassword
+                }
+                var url="http://localhost:8080/system/user/changePwd";
+                submit(JSON.stringify(user),url);
+
+                return false;
+            })
             form.on('submit(save)', function () {
                 var id  = $("#add-edit").find('#id').val()
                 var userAccount= $("#add-edit").find('#userAccount').val()

@@ -1,5 +1,6 @@
 package com.dlu.upms.common.excel;
 
+import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.metadata.BaseRowModel;
@@ -8,7 +9,10 @@ import com.alibaba.excel.support.ExcelTypeEnum;
 import com.dlu.upms.common.base.BusinessException;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -101,6 +105,22 @@ public class ExcelUtil {
         }
 
     }
+
+    public static void writeExcel(HttpServletResponse httpServletResponse, List data, String fileName, Class clazz) throws IOException {
+        writeExcel(httpServletResponse, data, fileName, fileName, clazz);
+    }
+
+
+    public static void writeExcel(HttpServletResponse response, List data, String fileName, String sheetName, Class clazz) throws IOException, IOException {
+        //防止中文乱码
+        fileName = URLEncoder.encode(fileName, "UTF-8");
+        response.setContentType("application/vnd.ms-excel");
+        response.setCharacterEncoding("utf-8");
+        //防止导入excel文件名中文不乱码
+        response.setHeader("Content-disposition", "attachment;fileName=" + fileName + ".xlsx" + ";fileName*=utf-8''" + fileName + ".xlsx");
+        EasyExcel.write(response.getOutputStream(), clazz).sheet(sheetName).doWrite(data);
+    }
+
 
 
 

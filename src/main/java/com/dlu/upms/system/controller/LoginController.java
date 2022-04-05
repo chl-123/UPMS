@@ -3,6 +3,7 @@ package com.dlu.upms.system.controller;
 import com.dlu.upms.common.base.ResponseConstant;
 import com.dlu.upms.common.base.Result;
 import com.dlu.upms.common.consts.SystemConst;
+import com.dlu.upms.system.dto.CreateUser;
 import com.dlu.upms.system.dto.Login;
 import com.dlu.upms.system.dto.QueryUser;
 import com.dlu.upms.system.dto.UserInfo;
@@ -11,6 +12,7 @@ import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +42,16 @@ public class LoginController {
         request.getSession().setAttribute(SystemConst.SYSTEM_USER_SESSION, userInfos.get(0));
         // 保存登录日志
         return new Result<UserInfo>().success(ResponseConstant.LOGIN_SUCCESS).put(userInfos.get(0));
+    }
+    @PostMapping("/doRegister")
+    @ResponseBody
+    public Result<?> create(@RequestBody CreateUser user) {
+        boolean result=iUserService.register(user);
+        if (result) {
+            return new Result<>().success("注册成功");
 
+        }else {
+            return new Result<>().error("注册失败，请重试");
+        }
     }
 }

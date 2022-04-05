@@ -14,6 +14,7 @@ import com.dlu.upms.business.service.IProjectSelectService;
 import com.dlu.upms.business.service.IProjectService;
 import com.dlu.upms.common.base.BusinessException;
 import com.dlu.upms.common.util.Utils;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -134,10 +135,58 @@ public class ProjectSelectServiceImpl extends ServiceImpl<ProjectSelectMapper, P
     }
 
     @Override
-    public List<Charts> selectCount() {
-        List<Charts> charts = projectSelectMapper.selectCountList();
+    public List<Charts> selectCount(ProjectSelect projectSelect) {
+        List<Charts> charts = projectSelectMapper.selectCountList(projectSelect);
 
         return charts;
+    }
+
+    @Override
+    public List<Charts> selectScore(ProjectSelect projectSelect) {
+        List<Charts> charts = projectSelectMapper.selectScore(projectSelect);
+
+        return charts;
+    }
+
+    @Override
+    public List<Charts> selectScoreCount(ProjectSelect projectSelect) {
+        Charts charts = projectSelectMapper.selectScoreCount(projectSelect);
+        List<Charts> chartsList=new ArrayList<>();
+        Charts charts1=new Charts();
+        Charts charts2=new Charts();
+        Charts charts3=new Charts();
+        Charts charts4=new Charts();
+        Charts charts5=new Charts();
+        if(charts!=null){
+            if(charts.getCou1()!=0){
+                charts1.setValue(charts.getCou1());
+                charts1.setName("0-60");
+                chartsList.add(charts1);
+            }
+            if(charts.getCou2()!=0){
+                charts2.setValue(charts.getCou2());
+                charts2.setName("0-60");
+                chartsList.add(charts2);
+            }
+            if(charts.getCou3()!=0){
+                charts3.setValue(charts.getCou3());
+                charts3.setName("70-80");
+                chartsList.add(charts3);
+            }
+            if(charts.getCou4()!=0){
+                charts4.setValue(charts.getCou4());
+                charts4.setName("80-90");
+                chartsList.add(charts4);
+            }
+            if(charts.getCou5()!=0){
+                charts5.setValue(charts.getCou5());
+                charts5.setName("90-100");
+                chartsList.add(charts5);
+            }
+
+        }
+
+        return chartsList;
     }
 
 

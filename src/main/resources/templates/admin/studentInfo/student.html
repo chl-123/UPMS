@@ -45,6 +45,8 @@
                         <div class="form-group" style="padding-left: 20px">
                             <button class="btn btn-primary btn-sm" id="queryBtn">查询</button>
                             <button class="btn btn-primary btn-sm" id="addBtn" onclick="addInfo()">新增</button>
+                            <button class="btn btn-primary btn-sm" id="batchAdd" >批量导入</button>
+                            <button class="btn btn-primary btn-sm" onclick="batchExport()" >导出数据</button>
                         </div>
 
                     </div>
@@ -58,8 +60,8 @@
 
         <!-- End Panel Other -->
     </div>
-    <div id="add-edit" style="display: none;padding: 20px 20px 20px 20px">
-        <form class="layui-form" style="padding: 20px 20px 20px 20px" >
+    <div id="add-edit" style="display: none;padding: 20px 20px 0px 20px">
+        <form class="layui-form"  >
             <input type="hidden"  id="id" style="width: 240px"   class="layui-input">
             <div class="layui-form-item center" >
                 <label class="layui-form-label" style="width: 100px" >学号：</label>
@@ -93,7 +95,7 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label" style="width: 100px">校内(校外)：</label>
+                <label class="layui-form-label" style="width: 120px;margin-left: -20px">校内(校外)：</label>
                 <div class="layui-input-block">
                     <input type="radio" id="isInside" name="isInside" value="0" title="校内" checked>
                     <input type="radio" id="isInside" name="isInside" value="1" title="校外" >
@@ -121,7 +123,7 @@
     <!-- 自定义js -->
     <script th:src="@{/js/content.js}"></script>
     <script th:src="@{/js/common.js}"></script>
-
+    <script th:src="@{/js/jquery.fileDownload.js}"></script>
     <!-- Bootstrap table -->
     <script th:src="@{/js/plugins/bootstrap-table/bootstrap-table.min.js}"></script>
     <script th:src="@{/js/plugins/bootstrap-table/bootstrap-table-mobile.min.js}"></script>
@@ -262,6 +264,10 @@
                             }
                         }],
                     responseHandler: function (res) { //后台返回的结果
+                        if(res.code=="10000011"){
+                            layer.msg(res.msg);
+                            parent.location.href ="http://localhost:8080/login";
+                        }
                         if(res.code == "200"){
                             var userInfo = res.data;
                             var NewData = [];
@@ -331,7 +337,33 @@
 
             return oTableInit;
         }
+        function batchExport() {
 
+            var userAccount        = $("#userAccount").val();
+            var userName         = $("#userName").val();
+            var updateTimeStart = $.common.dateFormat($("#updateTimeStart").val(),"yyyy-MM-dd")
+            var updateTimeEnd   =$.common.dateFormat($("#updateTimeEnd").val(),"yyyy-MM-dd")
+            var roleKey='student'
+            var temp = {  //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                userAccount      :     userAccount,
+                userName       :     userName        ,
+                updateTimeStart  :  updateTimeStart,
+                updateTimeEnd    :  updateTimeEnd,
+                roleKey:roleKey
+            };
+            $.fileDownload("http://localhost:8080/system/user/export",
+                {
+                    httpMethod : 'get',
+                    data: temp,
+                    successCallback : function(url) {
+                        layer.msg("导出成功");
+                    },
+                    failCallback : function(html, url) {
+                        alert("导出失败");
+                    }
+                });
+
+        }
 
         //刷新表格
         $('#queryBtn').click(function () {
@@ -340,7 +372,7 @@
         function addInfo() {
             layer.open({
                 type: 1,
-                title:"编辑",
+                title:"添加学生信息",
                 closeBtn: false,
                 shift: 2,
                 area: ['450px', '600px'],
@@ -355,7 +387,7 @@
         function edit(id,userAccount,userName,userEmail,userSex,userPhone,isInside,collegeId) {
             layer.open({
                 type: 1,
-                title:"编辑",
+                title:"编辑学生信息",
                 closeBtn: false,
                 shift: 2,
                 area: ['450px', '600px'],
@@ -413,7 +445,21 @@
         layui.use(['layer', 'form'], function () {
             var layer = layui.layer,
                 $ = layui.jquery,
-                form = layui.form;
+                form = layui.form,
+                upload=layui.upload;
+            //指定允许上传的文件类型
+            upload.render({
+                elem: '#batchAdd'
+                ,url: 'http://localhost:8080/system/user/batch' //此处配置你自己的上传接口即可
+                ,accept: 'file' //普通文件
+                , data: {
+                    flag:"1"
+                }
+                ,done: function(res){
+                    layer.msg(res.msg);
+                    $('#userTable').bootstrapTable('refresh', {url: '/system/user/page/list'});//url为后台action
+                }
+            });
             form.on('submit(save)', function () {
                 var id  = $("#add-edit").find('#id').val()
                 var userAccount= $("#add-edit").find('#userAccount').val()

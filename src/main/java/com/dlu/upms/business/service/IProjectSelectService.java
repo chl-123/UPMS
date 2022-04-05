@@ -24,5 +24,9 @@ public interface IProjectSelectService extends IService<ProjectSelect> {
 
     boolean updateProjectSelectInfo(UpdateProjectSelect projectSelect);
 
-    List<Charts> selectCount();
+    List<Charts> selectCount(ProjectSelect projectSelect);
+
+    List<Charts> selectScore(ProjectSelect projectSelect);
+
+    List<Charts> selectScoreCount(ProjectSelect projectSelect);
 }

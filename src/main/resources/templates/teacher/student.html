@@ -36,15 +36,9 @@
                             <label for="userName" style="padding-left: 20px">姓名：</label>
                             <input id="userName" class="form-control input-sm" STYLE="height: 36px">
                         </div>
-                        <div class="form-group" id="updateTime">
-                            <label for="updateTimeStart" style="padding-left: 20px">更新时间：</label>
-                            <input id="updateTimeStart" class="form-control layer-date" style="width: 100px;height: 36px">
-                            <div class="form-group">-</div>
-                            <input id="updateTimeEnd" class="form-control layer-date" style="width: 100px ;height: 36px">
-                        </div>
                         <div class="form-group" style="padding-left: 20px">
                             <button class="btn btn-primary btn-sm" id="queryBtn">查询</button>
-                            <button class="btn btn-primary btn-sm" id="addBtn" onclick="addInfo()">新增</button>
+
                         </div>
 
                     </div>
@@ -129,6 +123,12 @@
                             align: 'center',
                             width: '235px'
                         },
+
+                        {
+                            field: 'projectName',
+                            title: '所选项目名称',
+                            align: 'center'
+                        },
                         {
                             field: 'userSex',
                             title: '性别',
@@ -175,6 +175,10 @@
                         },
                         ],
                     responseHandler: function (res) { //后台返回的结果
+                        if(res.code=="10000011"){
+                            layer.msg(res.msg);
+                            parent.location.href ="http://localhost:8080/login";
+                        }
                         if(res.code == "200"){
                             var userInfo = res.data;
                             var NewData = [];
@@ -189,7 +193,8 @@
                                         'userPhone': '',
                                         'isInside':'',
                                         'collegeId':'',
-                                        'collegeName':''
+                                        'collegeName':'',
+                                        'projectName':''
                                     };
                                     dataNewObj.xuhao=i;
                                     dataNewObj.id = userInfo[i].id;
@@ -201,6 +206,7 @@
                                     dataNewObj.isInside = userInfo[i].isInside;
                                     dataNewObj.collegeName = userInfo[i].collegeName;
                                     dataNewObj.collegeId = userInfo[i].collegeId;
+                                    dataNewObj.projectName = userInfo[i].projectName;
                                     NewData.push(dataNewObj);
                                 }
                             }
