@@ -14,6 +14,7 @@ import com.dlu.upms.system.service.IRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class RoleController {
     private IRoleService iRoleService;
 
     @GetMapping("/page/list")
-    public PageResult<RoleInfo> pageList(QueryRole role, Page<RoleInfo> page) {
+    public PageResult<RoleInfo> pageList(QueryRole role, Page<RoleInfo> page,HttpSession session) {
         Page<RoleInfo> pageLog = iRoleService.selectRolePageList(page, role);
         PageResult<RoleInfo> pageResult = new PageResult<RoleInfo>(pageLog.getTotal(), pageLog.getRecords());
         return pageResult;
@@ -56,7 +57,7 @@ public class RoleController {
         return new Result<List<xmSelect>>().success().put(xmSelects);
     }
     @GetMapping("/delete/{id}")
-    public Result<?> delete(@PathVariable("id")String id) {
+    public Result<?> delete(@PathVariable("id")String id, HttpSession session) {
 
         boolean result=iRoleService.deleteRoleInfo(id);
         if (result) {

@@ -52,9 +52,9 @@
             </div>
         </div>
         <div class="layui-form-item center" >
-            <label class="layui-form-label" style="width: 100px" >学号：</label>
+            <label class="layui-form-label" style="width: 100px" >账号：</label>
             <div class="layui-input-block">
-                <input type="text"  id="userAccount" style="width: 240px"   class="layui-input"  lay-verify="required" required>
+                <input type="text"  id="userAccount" style="width: 240px"   class="layui-input"  lay-verify="required|number" required>
             </div>
         </div>
         <div class="layui-form-item">
@@ -74,7 +74,7 @@
         <div class="layui-form-item center" >
             <label class="layui-form-label" style="width: 100px" >邮箱：</label>
             <div class="layui-input-block">
-                <input type="text"  id="userEmail" style="width: 240px"   class="layui-input"  lay-verify="required" required>
+                <input type="text"  id="userEmail" style="width: 240px"   class="layui-input"  lay-verify="required|email" required>
             </div>
         </div>
         <div class="layui-form-item">
@@ -87,7 +87,7 @@
         <div class="layui-form-item center" >
             <label class="layui-form-label" style="width: 100px" >手机号：</label>
             <div class="layui-input-block">
-                <input type="text"  id="userPhone" style="width: 240px"   class="layui-input"  lay-verify="required" required>
+                <input type="text"  id="userPhone" style="width: 240px"   class="layui-input"  lay-verify="required|phone|number" required>
             </div>
         </div>
         <div class="layui-form-item">
@@ -163,7 +163,6 @@
             $ = layui.jquery,
             form = layui.form;
         form.on('submit(save)', function () {
-            let regmail = /(^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$)|(^$)/;
             var userAccount= $("#register").find('#userAccount').val()
             var userName=  $("#register").find('#userName').val()
             var userPassword=  $("#register").find('#userPassword').val()

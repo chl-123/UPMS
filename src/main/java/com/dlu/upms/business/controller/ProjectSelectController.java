@@ -33,7 +33,7 @@ public class ProjectSelectController {
     private IProjectSelectService iProjectSelectService;
 
     @PostMapping("/delete")
-    public Result<?> delete(@RequestBody CreateProjectSelect projectSelect) {
+    public Result<?> delete(@RequestBody CreateProjectSelect projectSelect, HttpSession session) {
 
         boolean result=iProjectSelectService.deleteProjectSelectInfo(projectSelect);
         if (result) {

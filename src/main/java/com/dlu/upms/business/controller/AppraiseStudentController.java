@@ -32,7 +32,7 @@ public class AppraiseStudentController {
     private IAppraiseStudentService iAppraiseStudentService;
 
     @GetMapping("/list")
-    public PageResult<AppraiseStudentInfo> list(QueryAppraiseStudent appraiseStudent, Page<AppraiseStudentInfo> page) {
+    public PageResult<AppraiseStudentInfo> list(QueryAppraiseStudent appraiseStudent, Page<AppraiseStudentInfo> page, HttpSession session) {
         Page<AppraiseStudentInfo> pageInfo = iAppraiseStudentService.selectAppraiseStudentList(page, appraiseStudent);
         PageResult<AppraiseStudentInfo> pageResult = new PageResult<AppraiseStudentInfo>(pageInfo.getTotal(), pageInfo.getRecords());
         return pageResult;

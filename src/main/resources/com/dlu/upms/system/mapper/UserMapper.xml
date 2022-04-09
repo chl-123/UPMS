@@ -43,6 +43,7 @@
         LEFT JOIN t_bd_college c on c.id=U.college_id AND c.del_flag=0
         WHERE U.del_flag = 0
         <trim prefix="AND (" suffix=")" prefixOverrides="AND">
+
             <if test="user.userName != null and user.userName != ''">
                 AND U.user_name like concat(concat('%', #{user.userName}), '%')
             </if>

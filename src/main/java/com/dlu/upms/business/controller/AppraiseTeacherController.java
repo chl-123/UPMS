@@ -42,7 +42,6 @@ public class AppraiseTeacherController {
                 project.setFlag("1");
             }
         }
-        System.out.println(project.toString());
         Page<ProjectInfo> pageInfo = iAppraiseTeacherService.selectProjectAppraiseListForTeacher(page, project);
         PageResult<ProjectInfo> pageResult = new PageResult<ProjectInfo>(pageInfo.getTotal(), pageInfo.getRecords());
         return pageResult;

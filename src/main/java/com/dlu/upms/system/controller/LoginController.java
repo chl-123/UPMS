@@ -31,6 +31,7 @@ public class LoginController {
         Object tokenCredentials = new SimpleHash("md5", login.getUserPassword(), login.getUserAccount(), 6).toHex();
         QueryUser queryUser = new QueryUser();
         queryUser.setUserAccount(login.getUserAccount());
+        queryUser.setUserStatus("0");
         List<UserInfo> userInfos = iUserService.selectList(queryUser);
         if (userInfos.size() == 0) {
             return new Result<String>().error(ResponseConstant.INVALID_ACCOUNT);
